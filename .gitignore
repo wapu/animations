@@ -56,3 +56,11 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# Extra
+*.exe
+*.webm
+*.mp4
+*.npy
+*.tsp
+*.cyc
