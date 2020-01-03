@@ -29,9 +29,9 @@ def render_webm(filename, make_frame, duration, extra_params={}):
                       fps=int(dict(webm_params, **extra_params)['-framerate']),
                       ffmpeg_params=params)
 
-def save_poster(filename, make_frame):
+def save_poster(filename, make_frame, t=0):
     c = mpy.VideoClip(make_frame, duration=1)
-    c.save_frame(f'{filename}.jpg', t=0)
+    c.save_frame(f'{filename}.jpg', t=t)
 
 mp4_params = {
     '-y': None,
