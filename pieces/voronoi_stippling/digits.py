@@ -3,7 +3,6 @@ import numpy as np
 import sys
 sys.path.insert(0, '../../tools')
 from rendering import *
-from geometry import *
 from stippling import *
 
 
@@ -15,18 +14,18 @@ duration = 10
 def prepare_data():
     for i in range(10):
         print('CREATING KEYFRAME', i)
-        points = stipple_image_points('digits/input/' + str(i) + '.png',
+        points = stipple_image_points(f'digits/{i}.png',
                                       n_points=300, scale_factor=1, max_iterations=100)
-        np.save('digits/' + str(i), points)
+        np.save(f'digits/{i}', points)
 
 
 # Render frame at time t
 def make_frame(t):
     surface = gz.Surface(width, height)
 
-    image_paths = ['digits/' + str(9-j) + '.npy' for j in range(10)]
+    image_paths = [f'digits/{9-j}.npy' for j in range(10)]
     image_paths.append(image_paths[0])
-    coords = [np.load(path)[:,::-1] * (height/1500) for path in image_paths]
+    coords = [np.load(path) * (height/1500) for path in image_paths]
 
     progress = t / duration
     weights = equidistant_weight_functions(progress, len(coords), 'hermite')
@@ -49,7 +48,7 @@ def make_frame(t):
 
 # Render animation
 if __name__ == '__main__':
-    prepare_data()
+    # prepare_data()
     save_poster(name, make_frame)
-    render_webm(name, make_frame, duration, webm_params)
-    convert_to_mp4(name, mp4_params)
+    # render_webm(name, make_frame, duration, webm_params)
+    # convert_to_mp4(name, mp4_params)
