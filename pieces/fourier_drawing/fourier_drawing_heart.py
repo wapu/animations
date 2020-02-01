@@ -1,5 +1,4 @@
 import numpy as np
-from shapely import geometry as geo
 
 import sys
 sys.path.insert(0, '../../tools')
@@ -7,7 +6,7 @@ from rendering import *
 from geometry import *
 
 
-name = 'fourier_drawing_both'
+name = 'fourier_drawing_heart'
 width, height = 768, 768
 duration = 5
 
@@ -67,7 +66,8 @@ def make_frame(t):
     for i in range(n_data):
         r, theta = data[i]
         tip_new = tip + r * np.array([np.cos(theta), np.sin(theta)])
-        gz.circle(xy=tip, r=r, stroke=(.3,.3,.3), stroke_width=1, fill=(1,1,1,.05)).translate(offset).draw(surface)
+        if i > 0:
+            gz.circle(xy=tip, r=r, stroke=(.3,.3,.3), stroke_width=1, fill=(1,1,1,.05)).translate(offset).draw(surface)
         tip = tip_new
         arm.append(tip)
 

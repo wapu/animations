@@ -1,5 +1,4 @@
 import numpy as np
-from shapely import geometry as geo
 
 import sys
 sys.path.insert(0, '../../tools')
