@@ -19,6 +19,8 @@ offset = (width/2 - tile_size*tiles[0]/2, height/2 - tile_size*tiles[1]/2)
 
 np.random.seed(123)
 pattern = np.random.choice(a=[-1,1], size=(n_patterns, *tiles))
+offsets = np.random.rand(*tiles)
+gradient = gz.ColorGradient('radial', [(0,(0,0,0,0)),(1,(0,0,0,1))], xy1=(0,0), xy2=(.15*width,0), xy3=(0,tile_size*tiles[0]/2))
 
 
 def draw_tile(x, y, size, surface, odd=False, rotation=1, transition=0.3):
@@ -41,12 +43,13 @@ def draw_tile(x, y, size, surface, odd=False, rotation=1, transition=0.3):
 def make_frame(t):
     surface = gz.Surface(width, height)
     progress = t / duration
+    progress = (progress + offsets) % 1.0
     p = interval_progresses(progress, 2*n_patterns, ['ease_in', 'ease_out']*n_patterns)
-    current_pattern = int(progress * n_patterns)
-    current_interval = int(progress * 2*n_patterns)
 
     for i in range(pattern.shape[2]):
         for j in range(pattern.shape[1]):
+            current_pattern = int(progress[i,j] * n_patterns)
+            current_interval = int(progress[i,j] * 2*n_patterns)
             if pattern[current_pattern, i, j] == pattern[(current_pattern+1)%n_patterns, i, j]:
                 draw_tile(tile_size*i, tile_size*j, tile_size, surface,
                           odd=((i+j)%2 == 0),
@@ -57,15 +60,16 @@ def make_frame(t):
                     draw_tile(tile_size*i, tile_size*j, tile_size, surface,
                               odd=((i+j)%2 == 0),
                               rotation=pattern[current_pattern, i, j],
-                              transition=p[current_interval])
+                              transition=p[current_interval][i,j])
                 else:
                     draw_tile(tile_size*i, tile_size*j, tile_size, surface,
                               odd=((i+j)%2 == 0),
                               rotation=pattern[(current_pattern+1)%n_patterns, i, j],
-                              transition=1 - p[current_interval])
+                              transition=1 - p[current_interval][i,j])
 
-    gz.circle(r=.65 * width, stroke_width=.5 * width).translate([width/2, height/2]).draw(surface)
-    gz.circle(r=.40 * width, stroke_width=2, stroke=(1,1,1)).translate([width/2, height/2]).draw(surface)
+    # gz.circle(r=.65 * width, stroke_width=.5 * width).translate([width/2, height/2]).draw(surface)
+    # gz.circle(r=.40 * width, stroke_width=2, stroke=(.5,.5,.5)).translate([width/2, height/2]).draw(surface)
+    gz.circle(r=width, fill=gradient).translate([width/2, height/2]).draw(surface)
 
     return surface.get_npimage()
 

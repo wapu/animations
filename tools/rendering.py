@@ -2,6 +2,7 @@ import os, shutil, time
 import subprocess
 from multiprocessing import Pool
 from PIL import Image
+import numpy as np
 basestring = str
 
 
@@ -86,7 +87,7 @@ def interpolate(val, interpolation):
 
 def interval_progress(progress, interval, interpolation=None):
     (start, stop) = interval
-    p = min(1, max(0, (progress - start) / (stop - start)))
+    p = np.minimum(1.0, np.maximum(0.0, (progress - start) / (stop - start)))
     return interpolate(p, interpolation)
 
 def interval_progresses(progress, n_intervals, interpolation=None):
