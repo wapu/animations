@@ -56,6 +56,12 @@ def get_circle_coordinates(n_points, radius=1, center=(0,0)):
     return np.stack([X,Y], axis=-1)
 
 
+def get_circle_mask(width, height, r=0):
+    coords = np.mgrid[:width,:height].transpose([1,2,0])
+    dists = np.sqrt(np.sum(np.square(coords - (width/2, height/2)), axis=2))
+    return np.maximum(0, np.minimum(1, (r - dists)))
+
+
 def circle_from_three_points(p1, p2, p3):
     d = (p1[0] - p2[0]) * (p2[1] - p3[1]) - (p2[0] - p3[0]) * (p1[1] - p2[1])
     if d == 0:

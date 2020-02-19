@@ -12,22 +12,21 @@ width, height = 768, 768
 duration = 7
 
 
+coords = np.mgrid[:2*width,:2*height].transpose([1,2,0])
+I_ = np.exp(-np.sum(np.square(coords - (width, height)), axis=2) / (2 * 255**2))
+mask = get_circle_mask(width, height, 300)
+
+
 # Render frame at time t
 def make_frame(t):
     progress = t / duration
     p = interval_progresses(progress, 2, 'hermite')
 
-    center = (width, height)
-    outer_radius = 300
-    sigma = 255
-
-    coords = np.mgrid[0:2*width, 0:2*height].transpose([1,2,0])
-    I = np.exp(-np.sum(np.square(coords - center), axis=2) / (2*sigma*sigma))
-    I *= (1.25 + 7*(p[0] - p[1]))
+    I = I_ * (1.25 + 7*(p[0] - p[1]))
     I = np.mod(I, 1.0)
 
     I = resize(I, (width, height))
-    clip_to_circle(I, r=outer_radius)
+    I *= mask
 
     I = np.tile(I[:,:,None], (1,1,3))
 
