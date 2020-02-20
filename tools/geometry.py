@@ -81,9 +81,8 @@ def polar_to_cartesian(r, theta):
     x = r * np.cos(theta)
     return y, x
 
-# TODO: proper numpy
-def polar_to_cartesian_np(rtheta):
-    return np.array(polar_to_cartesian(rtheta[0], rtheta[1]))
+def polar_to_cartesian_np(polar):
+    return (polar[:,0] * np.array([np.cos(polar[:,1]), np.sin(polar[:,1])])).T
 
 
 # TODO: proper numpy
@@ -92,9 +91,10 @@ def cartesian_to_polar(y, x):
     theta = np.arctan2(y,x)
     return r, theta
 
-# TODO: proper numpy
-def cartesian_to_polar_np(yx):
-    return np.array(cartesian_to_polar(yx[0], yx[1]))
+def cartesian_to_polar_np(cartesian):
+    r = np.sqrt(np.sum(np.square(cartesian), axis=1))
+    t = np.arctan2(cartesian[:,1], cartesian[:,0])
+    return np.vstack([r, t]).T
 
 
 def generate_harmonics(symmetry, n_harmonics):
