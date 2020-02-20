@@ -4,6 +4,9 @@ from cmath import exp
 from random import randint
 
 
+def norm(v, axis=None):
+    return v / np.sqrt(np.sum(np.square(v), axis=axis))
+
 def get_rotation_matrix(angle, homogeneous=False):
     c = np.cos(angle)
     s = np.sin(angle)
