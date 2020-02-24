@@ -3,6 +3,8 @@ import numpy as np
 from cmath import exp
 from random import randint
 
+from rendering import hermite
+
 
 def norm(v, axis=None):
     return v / np.sqrt(np.sum(np.square(v), axis=axis))
@@ -59,10 +61,13 @@ def get_circle_coordinates(n_points, radius=1, center=(0,0)):
     return np.stack([X,Y], axis=-1)
 
 
-def get_circle_mask(width, height, r=0):
+def get_circle_mask(width, height, r=0, fade=0):
     coords = np.mgrid[:width,:height].transpose([1,2,0])
     dists = np.sqrt(np.sum(np.square(coords - (width/2, height/2)), axis=2))
-    return np.maximum(0, np.minimum(1, (r - dists)))
+    if fade <= 1:
+        return np.maximum(0, np.minimum(1, (r - dists)))
+    else:
+        return hermite(np.maximum(0, np.minimum(1, (r - dists - 0.5) / np.abs(fade) + 0.5)))
 
 
 def circle_from_three_points(p1, p2, p3):
@@ -208,7 +213,7 @@ def line_ray_intersection(r_origin, r_dir, p1, p2, norm=True):
     if norm: r_dir /= np.linalg.norm(r_dir)
     p1 = np.array(p1, dtype=np.float)
     p2 = np.array(p2, dtype=np.float)
-    
+
     v1 = r_origin - p1
     v2 = p2 - p1
     v3 = np.array([-r_dir[1], r_dir[0]])
