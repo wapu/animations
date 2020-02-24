@@ -8,7 +8,7 @@ from chladni import *
 from geometry import *
 
 
-name = 'chladni_kaleidoscope_4'
+name = 'chladni_kaleidoscope_5'
 width, height = 768, 768
 duration = 10
 
@@ -21,11 +21,10 @@ def make_frame(t):
     p = np.mean(interval_progresses(progress, 4, 'hermite')) * 2*np.pi
 
     # Overlayed wave patterns
-    n = 5 + np.sin(p)
-    m = 6 + 2*np.cos(p)
-    I = np.exp(-np.abs(get_chladni_pattern(n, m, width, height, lim=1.5, angle=np.pi/4)))**8
-    I = np.mean([I, I[:,::-1], I[::-1,:], I[::-1,::-1]], axis=0)
-    I = np.minimum(1, 2*I)**2
+    n = 2.5 + np.sin(p)
+    m = 4 + 1.5*np.cos(p)
+    I = np.mean([np.exp(-np.abs(get_chladni_pattern(n, m, width, height, lim=2, angle=i * 2*np.pi/5)))**8 for i in range(5)], axis=0)
+    I = np.minimum(1, 2*I)**3
 
     # Border fade
     I *= mask
