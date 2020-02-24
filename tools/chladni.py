@@ -1,11 +1,11 @@
 import numpy as np
-from scipy.optimize import fsolve
-from matplotlib import pyplot as plt
+from geometry import get_rotation_matrix
+# from scipy.optimize import fsolve
 
 
 # Equations adapted from https://physics.stackexchange.com/a/466553
 def k(m):
-    # Smooth approximation of interpolated equation
+    # Smooth approximation of relaxed equation
     return 0.8 + (m-1) * 1.57
 
     # # Relaxation of discrete equation (has sudden jumps)
@@ -40,34 +40,35 @@ def u(m,x):
     #     return (np.sinh(k(m)) * np.sin(k(m) * x) + np.sin(k(m)) * np.sinh(k(m) * x)) / np.sqrt(np.sinh(k(m))**2 + np.sin(k(m))**2)
 
 
-def get_chladni_pattern(m, n, width, height, lim=1):
-    xx, yy = np.mgrid[-lim:lim:2*lim/width, -lim:lim:2*lim/height]
+def get_chladni_pattern(m, n, width, height, lim=1, angle=0):
+    if angle == 0:
+        xx, yy = np.mgrid[-lim:lim:2*lim/width, -lim:lim:2*lim/height]
+    else:
+        points = np.mgrid[-lim:lim:2*lim/width, -lim:lim:2*lim/height]
+        xx, yy = points.transpose(1,2,0).dot(get_rotation_matrix(angle)).transpose(2,0,1)
     return u(m, xx) * u(n, yy) + u(n, xx) * u(m, yy)
 
 
+
 if __name__ == '__main__':
+
+    from matplotlib import pyplot as plt
     width, height = 768, 768
 
-    import matplotlib.animation as animation
-    t = np.linspace(0,2*np.pi,100)
-    frames = [np.exp(-np.abs(get_chladni_pattern(n, m, width, height)))**8 for n, m in zip(4 + np.sin(t), 5 + np.cos(t))]
-    for i in range(len(frames)):
-        frames[i] = np.mean([frames[i], frames[i][:,::-1], frames[i][::-1,::-1], frames[i][::-1,:]], axis=0)
-    fig = plt.figure()
-    images = [[plt.imshow(frame, vmin=0, vmax=1, cmap='gray', animated=True)] for frame in frames]
-    animation = animation.ArtistAnimation(fig, images, interval=100, blit=True)
-    plt.show()
+    plt.subplot(2,2,1)
+    img = np.exp(-np.abs(get_chladni_pattern(3, 4, width, height, lim=1.2)))**6
+    plt.imshow(img, vmin=0, vmax=1, cmap='gray')
 
-    # plt.subplot(2,2,1)
-    # img = np.exp(-np.abs(get_chladni_pattern(3, 4, width, height, lim=1.2)))**6
-    # plt.imshow(img, vmin=0, vmax=1, cmap='gray')
-    # plt.subplot(2,2,2)
-    # img = np.exp(-np.abs(get_chladni_pattern(3, 5, width, height, lim=1.2)))**6
-    # plt.imshow(img, vmin=0, vmax=1, cmap='gray')
-    # plt.subplot(2,2,3)
-    # img = np.exp(-np.abs(get_chladni_pattern(4, 4, width, height, lim=1.2)))**6
-    # plt.imshow(img, vmin=0, vmax=1, cmap='gray')
-    # plt.subplot(2,2,4)
-    # img = np.exp(-np.abs(get_chladni_pattern(4, 5, width, height, lim=1.2)))**6
-    # plt.imshow(img, vmin=0, vmax=1, cmap='gray')
-    # plt.show()
+    plt.subplot(2,2,2)
+    img = np.exp(-np.abs(get_chladni_pattern(3, 5, width, height, lim=1.2)))**6
+    plt.imshow(img, vmin=0, vmax=1, cmap='gray')
+
+    plt.subplot(2,2,3)
+    img = np.exp(-np.abs(get_chladni_pattern(4, 4, width, height, lim=1, angle=np.pi/4)))**6
+    plt.imshow(img, vmin=0, vmax=1, cmap='gray')
+
+    plt.subplot(2,2,4)
+    img = np.exp(-np.abs(get_chladni_pattern(4, 5, width, height, lim=1, angle=-np.pi/4)))**6
+    plt.imshow(img, vmin=0, vmax=1, cmap='gray')
+
+    plt.show()
