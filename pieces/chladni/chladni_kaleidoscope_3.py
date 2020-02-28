@@ -10,7 +10,7 @@ from geometry import *
 
 name = 'chladni_kaleidoscope_3'
 width, height = 768, 768
-duration = 10
+duration = 20
 
 radius = 300
 mask = get_circle_mask(width, height, radius, fade=150)
@@ -35,6 +35,6 @@ def make_frame(t):
 
 # Render animation
 if __name__ == '__main__':
-    save_poster(name, make_frame, type='png')
+    save_poster(name, make_frame)
     render_webm(name, make_frame, duration, webm_params)
     convert_to_mp4(name, mp4_params)
