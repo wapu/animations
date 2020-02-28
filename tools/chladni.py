@@ -21,15 +21,15 @@ def k(m):
     #     return fsolve(lambda x: np.tan(x) - np.tanh(x), (m - 1/2) * np.pi/2)
 
 
-def u(m,x):
+def u(m,x,p=0):
     if m==0:
         return np.sqrt(3/2) * x
 
     # Relaxation of discrete equation
     else:
         km = k(m)
-        even = (np.cosh(km) * np.cos(km * x) + np.cos(km) * np.cosh(km * x)) / np.sqrt(np.cosh(km)**2 + np.cos(km)**2)
-        odd  = (np.sinh(km) * np.sin(km * x) + np.sin(km) * np.sinh(km * x)) / np.sqrt(np.sinh(km)**2 + np.sin(km)**2)
+        even = (np.cosh(km) * np.cos(km * x + p) + np.cos(km + p) * np.cosh(km * x)) / np.sqrt(np.cosh(km)**2 + np.cos(km + p)**2)
+        odd  = (np.sinh(km) * np.sin(km * x + p) + np.sin(km + p) * np.sinh(km * x)) / np.sqrt(np.sinh(km)**2 + np.sin(km + p)**2)
         alpha = np.abs(m%2 - 1)
         return alpha * even + (1 - alpha) * odd
 
@@ -40,14 +40,19 @@ def u(m,x):
     #     return (np.sinh(k(m)) * np.sin(k(m) * x) + np.sin(k(m)) * np.sinh(k(m) * x)) / np.sqrt(np.sinh(k(m))**2 + np.sin(k(m))**2)
 
 
-def get_chladni_pattern(m, n, width, height, lim=1, angle=0):
+def get_chladni_pattern(m, n, width, height, lim=1, angle=0, xphase=0, yphase=0):
     if angle == 0:
         xx, yy = np.mgrid[-lim:lim:2*lim/width, -lim:lim:2*lim/height]
     else:
         points = np.mgrid[-lim:lim:2*lim/width, -lim:lim:2*lim/height]
         xx, yy = points.transpose(1,2,0).dot(get_rotation_matrix(angle)).transpose(2,0,1)
-    return u(m, xx) * u(n, yy) + u(n, xx) * u(m, yy)
+    return u(m, xx, xphase) * u(n, yy, yphase) + u(n, xx, xphase) * u(m, yy, yphase)
 
+
+# Equation used in https://demonstrations.wolfram.com/ChladniFigures/
+def get_wolfram_chladni_pattern(m, n, width, height, lim=5, xphase=0, yphase=0):
+    xx, yy = np.mgrid[-lim:lim:2*lim/width, -lim:lim:2*lim/height]
+    return np.cos(n * np.pi * xx + xphase)*np.cos(m * np.pi * yy + yphase) - np.cos(m * np.pi * xx + xphase)*np.cos(n * np.pi * yy + yphase)
 
 
 if __name__ == '__main__':
