@@ -19,13 +19,13 @@ def get_extinction_symbol_params(radius=None, stroke_width=1):
     return radius_*stroke_width, corners_*stroke_width, stroke_width
 
 
-def get_extinction_symbol_contours(radius=None, stroke_width=1):
+def get_extinction_symbol_contours(radius=None, stroke_width=1, center=(0,0)):
     # Get scaled patameters
     radius, corners, stroke_width = get_extinction_symbol_params(radius, stroke_width)
     corners = np.concatenate([np.zeros((1,2)), corners, np.zeros((1,2))])
     # Construct outer circle and inner lines
-    circle = geo.Point((0,0)).buffer(radius).boundary.buffer(stroke_width/2)
-    lines = geo.LineString(corners).buffer(stroke_width/2, join_style=2, cap_style=3)
+    circle = geo.Point(center).buffer(radius).boundary.buffer(stroke_width/2)
+    lines = geo.LineString(corners + center).buffer(stroke_width/2, join_style=2, cap_style=3)
     # Take union over areas
     all = circle.union(lines)
     return [all.exterior, *all.interiors]
