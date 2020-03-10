@@ -9,7 +9,7 @@ from stippling import *
 from xr import *
 
 
-name = 'dist_lines'
+name = 'xr_dist_lines'
 width, height = 768, 768
 duration = 15
 max_dist = 50
