@@ -54,18 +54,36 @@ def perlin(x, y, t=0, tile_shifts=None):
     x2 = lerp(n01, n11, u)
     return lerp(x1, x2, v)
 
-def fractal_perlin(shape, t=0, frequency=4, octaves=3, persistence=0.5, tiled=True):
+
+def fractal_perlin(shape, t=0, frequency=4, octaves=3, persistence=0.5, tiled=True, coordinate_input=None):
     noise = np.zeros(shape)
-    amplitude = 1
+    amplitude = persistence
+
     for octave in range(octaves):
-        x, y = np.meshgrid(np.linspace(0, frequency, shape[0], endpoint=False), np.linspace(0, frequency, shape[1], endpoint=False))
+        if coordinate_input is None:
+            x, y = np.meshgrid(np.linspace(0, frequency, shape[0], endpoint=False), np.linspace(0, frequency, shape[1], endpoint=False))
+        else:
+            x, y = coordinate_input, coordinate_input
+
         if tiled and shape[0]%frequency == 0 and shape[1]%frequency == 0:
             noise += amplitude * perlin(x, y, t, tile_shifts=(-shape[0]//frequency, -shape[1]//frequency))
         else:
             noise += amplitude * perlin(x, y, t)
         frequency *= 2
         amplitude *= persistence
+
     return noise
+
+
+def self_referential_perlin(shape, t=0, frequency=4, octaves=3, persistence=0.5, seed=1):
+    np.random.seed(seed)
+    noise = fractal_perlin(shape, t=t, frequency=frequency, octaves=octaves, persistence=persistence, tiled=False)
+    noise = frequency*(2**octaves) * (noise - noise.min()) / (noise.max() - noise.min())
+    np.random.seed(seed)
+    noise = fractal_perlin(shape, t=t, frequency=frequency, octaves=octaves, persistence=persistence, tiled=False, coordinate_input=noise)
+    noise = frequency*(2**octaves) * (noise - noise.min()) / (noise.max() - noise.min())
+    return noise
+
 
 def fractal_perlin_loop(shape, n_frames, octaves=3, persistence=.5, seed=123):
     frames = []
@@ -75,15 +93,21 @@ def fractal_perlin_loop(shape, n_frames, octaves=3, persistence=.5, seed=123):
     return frames
 
 
+
 if __name__ == '__main__':
-    frames = fractal_perlin_loop((768, 768), 50)
-    fig = plt.figure()
-    images = [[plt.imshow(frame, animated=True)] for frame in frames]
-    animation = animation.ArtistAnimation(fig, images, interval=50, blit=True)
-    plt.show()
+    pass
+
+    # frames = fractal_perlin_loop((768, 768), 50)
+    # fig = plt.figure()
+    # images = [[plt.imshow(frame, animated=True)] for frame in frames]
+    # animation = animation.ArtistAnimation(fig, images, interval=50, blit=True)
+    # plt.show()
 
     # tiled = fractal_perlin((400, 400))
     # tiled = np.concatenate([tiled, tiled], axis=0)
     # tiled = np.concatenate([tiled, tiled], axis=1)
-    # plt.imshow(tiled)
+    # plt.imshow(tiled, cmap='gray')
+    # plt.show()
+
+    # plt.imshow(self_referential_perlin((768,768)), cmap='gray', interpolation='bicubic')
     # plt.show()
