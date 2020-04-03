@@ -64,3 +64,8 @@ target/
 *.npy
 *.tsp
 *.cyc
+*.zip
+pieces/xr/species/gallery/thumbs
+pieces/xr/species/gallery/*.png
+pieces/xr/species/critically endangered/*.jpg
+pieces/xr/species/critically endangered/*.jpeg

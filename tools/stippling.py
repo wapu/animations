@@ -182,7 +182,7 @@ def lloyds_method(points, P, Q, clip_polygon, max_iterations, attractors=None, r
 		print('Generating centroidal voronoi diagram...')
 	it, max_d, std_prev, std_diff = 0, P.shape[0], 1, 1
 	# while std_diff > 5e-8 and max_d > (P.shape[0] * 1e-3) and it < max_iterations:
-	while it < max_iterations:
+	while it < max_iterations and max_d > 0.05:
 		it += 1
 		v = Voronoi(points)
 
