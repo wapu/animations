@@ -13,14 +13,14 @@ from stippling import *
 name = 'xr_species'
 width, height = 1080, 1080
 n_points = 10000
-duration = 10 # 300
+duration = 10 # 3 * n_species
 
 # np.random.seed(123)
 # species_pngs = sorted(glob.glob('species/critically endangered/*.png'))
 # species_pngs = list(np.random.permutation(species_pngs))
 # species_names = [png.split('\\')[-1].split('.')[0] for png in species_pngs]
 
-species_names = ['Lotus maculatus']
+species_names = ['']
 print(f'Stipple image for species {species_names[0]}:')
 points = stipple_image_points(f'species/critically endangered/{species_names[0]}.png', n_points=n_points, scale_factor=1, max_iterations=100)
 np.save(f'species/np/{species_names[0]}', points)
@@ -66,6 +66,36 @@ def prepare_data():
         np.save(f'species/np/{names[n+1]}_perm.npy', B[perm])
 
 
+def write_svg(points, path, name):
+    svg = f'<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="100%" height="100%" viewBox="0 0 {width} {height}"' + \
+           ' fill="#fff" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" style="background-color:#000" preserveAspectRatio="xMidYMin">'
+
+    svg += '''\n
+<defs>
+    <style type="text/css">
+        @font-face {
+            font-family: "FUCXED CAPS";
+            src: local("FUCXED CAPS"), local("FUCXED CAPS Regular"),
+            local("FUCXEDCAPS-v2"),
+            local("FUCXEDCAPSLatin-Regular"),
+            url("FUCXEDCAPSLatin-Regular.otf") format("opentype"),
+            url("FUCXEDCAPSLatin-Regular.woff") format("woff"),
+            url("FUCXEDCAPSLatin-Regular.woff2") format("woff2");
+            font-weight: normal;
+            font-style: normal;
+        }
+    </style>
+</defs>'''
+
+    svg += f'\n\n<rect x="0" y="0" width="{width}" height="{height}" style="fill: #000; stroke: none;" />\n'
+    for p in points:
+        svg += f'\n<circle cx="{p[0]:.2f}" cy="{p[1]:.2f}" r="1.5"/>'
+    svg += f'\n\n<text x="{width/2}" y="{height - 35}" style="font-family: \'FUCXED CAPS\'; font-size: 48px; fill: rgb(51,51,51); stroke: none; text-anchor: middle;">{name}</text>'
+    svg += '\n\n</svg>'
+    with open(f'{path}/{name}.svg', 'w') as f:
+        f.write(svg)
+
+
 def render_species(forced_names=[], thumbnail_size=(300,300), update_zip=False):
     from PIL import Image
     import zipfile
@@ -77,36 +107,45 @@ def render_species(forced_names=[], thumbnail_size=(300,300), update_zip=False):
         forced_names = list(species_names)
 
     for name in species_names + forced_names:
-        if os.path.isfile(f'species/gallery/{name}.png') and (name not in forced_names): continue
-        print('Rendering', name)
-        forced_names.remove(name)
+        if (not os.path.isfile(f'species/gallery/{name}.png')) or (name in forced_names):
+            print('Rendering', name)
 
-        surface = gz.Surface(width, height)
-        gz.rectangle(xy=(width/2, height/2), lx=width, ly=height, fill=(0,0,0)).draw(surface)
+            surface = gz.Surface(width, height)
+            gz.rectangle(xy=(width/2, height/2), lx=width, ly=height, fill=(0,0,0)).draw(surface)
 
-        gz.text(name,
-                fontfamily='FUCXED CAPS', fontsize=48,
-                fill=(.2,.2,.2,1),
-                xy=(width/2, height - 35),
-                h_align='center', v_align='top').draw(surface)
+            gz.text(name,
+                    fontfamily='FUCXED CAPS', fontsize=48,
+                    fill=(.2,.2,.2,1),
+                    xy=(width/2, height - 35),
+                    h_align='center', v_align='top').draw(surface)
 
-        coords = np.load(f'species/np/{name}.npy') * height/1500 - (0, 25)
-        for i in range(len(coords)):
-            gz.circle(xy=coords[i,:], r=1.5, fill=(1,1,1)).draw(surface)
+            coords = np.load(f'species/np/{name}.npy') * height/1500 - (0, 25)
+            for i in range(len(coords)):
+                gz.circle(xy=coords[i,:], r=1.5, fill=(1,1,1)).draw(surface)
 
-        surface.write_to_png(f'species/gallery/{name}.png')
+            surface.write_to_png(f'species/gallery/{name}.png')
 
-        # Generate thumbnail
-        im = Image.open(f'species/gallery/{name}.png')
-        im.thumbnail(thumbnail_size)
-        im.save(f'species/gallery/thumbs/{name}.png')
+            # Generate thumbnail
+            im = Image.open(f'species/gallery/{name}.png')
+            im.thumbnail(thumbnail_size)
+            im.save(f'species/gallery/thumbs/{name}.png')
+
+        if (not os.path.isfile(f'species/gallery/{name}.svg')) or (name in forced_names):
+            print('Writing SVG for', name)
+            forced_names.remove(name)
+            coords = np.load(f'species/np/{name}.npy') * height/1500 - (0, 25)
+            write_svg(coords, 'species/gallery', name)
 
     if update_zip:
-        # Update zip file
-        with zipfile.ZipFile(f'species/gallery/endangered_species_{datetime.datetime.now():%Y-%m-%d}.zip', 'w',
+        # Update zip files
+        with zipfile.ZipFile(f'species/gallery/endangered_species_png_{datetime.datetime.now():%Y-%m-%d}.zip', 'w',
                              compression=zipfile.ZIP_DEFLATED) as f:
             for name in species_names:
                 f.write(f'species/gallery/{name}.png', f'{name}.png')
+        with zipfile.ZipFile(f'species/gallery/endangered_species_svg_{datetime.datetime.now():%Y-%m-%d}.zip', 'w',
+                             compression=zipfile.ZIP_DEFLATED) as f:
+            for name in species_names:
+                f.write(f'species/gallery/{name}.svg', f'{name}.svg')
 
 
 # image_paths = ['species/np/_xr.npy'] + [f'species/np/{name}_perm.npy' for name in species_names] + ['species/np/_xr_perm.npy']
@@ -173,4 +212,4 @@ if __name__ == '__main__':
     save_poster(name, make_frame, t=0)
     # render_webm(name, make_frame, duration, webm_params)
     # convert_to_mp4(name, mp4_params)
-    render_species(species_names, update_zip=True)
+    render_species(species_names, update_zip=False)

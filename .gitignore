@@ -65,6 +65,9 @@ target/
 *.tsp
 *.cyc
 *.zip
+*.eps
+*.svg
+
 pieces/xr/species/gallery/thumbs
 pieces/xr/species/gallery/*.png
 pieces/xr/species/critically endangered/*.jpg

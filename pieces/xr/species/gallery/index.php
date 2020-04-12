@@ -2,7 +2,7 @@
 
 <head>
 
-    <link rel="icon" type="image/png" href="font/favicon.png">
+    <link rel="icon" type="image/png" href="favicon.png">
     <meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />
     <meta name="author" content="Jakob Kruse" />
 
@@ -14,10 +14,10 @@
 
         @font-face {
             font-family: 'FUCXED CAPS';
-            src: local('FUCXED CAPS'), local('FUCXEDCAPS'), local('FUCXEDCAPSLatin-Regular');
-            src: url('font/FUCXEDCAPSLatin-Regular.otf') format('opentype');
-            src: url('font/FUCXEDCAPSLatin-Regular.woff') format('woff');
-            src: url('font/FUCXEDCAPSLatin-Regular.woff2') format('woff2');
+            src: local('FUCXED CAPS'); src: local('FUCXED CAPS Regular'); src: local('FUCXEDCAPS-v2'); src: local('FUCXEDCAPSLatin-Regular');
+            src: url('FUCXEDCAPSLatin-Regular.otf') format('opentype');
+            src: url('FUCXEDCAPSLatin-Regular.woff') format('woff');
+            src: url('FUCXEDCAPSLatin-Regular.woff2') format('woff2');
             font-weight: normal;
             font-style: normal;
         }
@@ -39,9 +39,6 @@
     <?php
         $images = glob('*.png');
         usort($images, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
-        $zips = glob('*.zip');
-        usort($zips, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
-        $zip = $zips[0];
     ?>
 
     <h1 style="font-size: 46pt; color: #777; margin-bottom: 3pt;"> <?php echo sizeof($images); ?> critically endangered species </h1>
@@ -49,13 +46,28 @@
         <a href="https://www.nature.com/articles/d41586-019-01448-4">1 million species</a> are facing extinction! <br>
         All images below are public domain, <br>
         Click to enlarge and use as you see fit. <br>
-        <a href="<?php echo $zip; ?>">Get ZIP file</a> | SVGs coming soon | <a href="mailto:wapu@posteo.net">Contact</a>
+        <?php
+            if(isset($_GET["svg"])) {
+                $zips = glob('endangered_species_svg_*.zip');
+                usort($zips, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
+                echo "<a href=".$zips[0].">Get ZIP file</a> | <a href='index.php' target='_self'>switch to PNG</a> | <a href='mailto:wapu@posteo.net'>Contact</a>";
+            }
+            else {
+                $zips = glob('endangered_species_png_*.zip');
+                usort($zips, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
+                echo "<a href=".$zips[0].">Get ZIP file</a> | <a href='index.php?svg' target='_self'>switch to SVG</a> | <a href='mailto:wapu@posteo.net'>Contact</a>";
+            }
+        ?>
     </p>
 
     <?php
         foreach($images as $png){
             $name = pathinfo($png, PATHINFO_FILENAME);
-            echo "<div class='figure'><div class='name'>".$name."</div><a href='".$png."' target='new'><img src='thumbs/".$png."' width='300' height='300' alt='".$name."' /></a></div>\n";
+            if(isset($_GET["svg"]))
+                $href = $name.'.svg';
+            else
+                $href = $name.'.png';
+            echo "<div class='figure'><div class='name'>".$name."</div><a href='".$href."' target='new'><img src='thumbs/".$png."' width='300' height='300' alt='".$name."' /></a></div>\n";
         }                 
     ?>
 
