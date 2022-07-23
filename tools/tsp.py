@@ -8,13 +8,27 @@ from geometry import *
 def write_tsp(output_path, coordinates):
 	with open(output_path, 'w') as f:
 		f.write('NAME: output\n')
-		f.write('COMMENT: none\n')
 		f.write('TYPE: TSP\n')
-		f.write('DIMENSION: %d\n' % len(coordinates))
+		f.write(f'DIMENSION: {len(coordinates)}\n')
 		f.write('EDGE_WEIGHT_TYPE: EUC_2D\n')
 		f.write('NODE_COORD_SECTION\n')
 		for i in range(len(coordinates)):
-			f.write('%d %g %g\n' % (i, coordinates[i,1], coordinates[i,0]))
+			f.write('{i} {coordinates[i,1]} {coordinates[i,0]}\n')
+		f.write('EOF')
+
+
+def write_tsp_dist(output_path, distance_matrix):
+	with open(output_path, 'w') as f:
+		f.write('NAME: output\n')
+		f.write('TYPE: TSP\n')
+		f.write(f'DIMENSION: {distance_matrix.shape[0]}\n')
+		f.write('EDGE_WEIGHT_TYPE: EXPLICIT\n')
+		f.write('EDGE_WEIGHT_FORMAT: FULL_MATRIX\n')
+		f.write('EDGE_WEIGHT_SECTION\n')
+		for i in range(distance_matrix.shape[0]):
+			for j in range(distance_matrix.shape[1]):
+				f.write(f' {int(distance_matrix[i][j])}')
+			f.write('\n')
 		f.write('EOF')
 
 
@@ -29,11 +43,11 @@ def read_cyc(input_path):
 
 
 def postprocess_cyc(input_path, cycle_path, output_path, size, segment_length=4, degree=4, radius=15./16., normalize_points=True):
-	height, width = size
 	points = np.load(input_path)
 	cycle = read_cyc(cycle_path)
 
 	if normalize_points:
+		height, width = size
 		center_and_scale(points, (height/2, width/2), min(height, width)/2 * radius)
 
 	points2 = np.zeros(points.shape)

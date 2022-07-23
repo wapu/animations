@@ -10,20 +10,35 @@ from stippling import *
 
 
 
-name = 'xr_species'
-width, height = 1080, 1080
+# This looped animation shows 150 species that are ranked "critically endangered" or worse on the IUCN red list. These animals, plants and other organisms are going extinct due to habitat loss, climate change, ecosystem collapse or simply being hunted down. In all cases, human activity is the main factor for their decline. This needs to stop. We need to admit the scale of the catastrophe and our collective responsibility for it, and then take radical action to change our destructive system. There is not much time left!
+
+# ---
+
+# You can find the individual images here:
+# https://wapu.uber.space/gallery/
+# All were generated with Python code starting from specially prepared photos found on the web.
+
+# Q: Why so many frogs and turtles?
+# A: There is a tragic abundance of critically endangered subspecies in these groups, but they are also overrepresented here because it simply is easier to find suitable pictures of these animals.
+
+
+name = 'xr_species_point_cloud'
+# width, height = 1080, 1080
+width, height = 2560, 1440
 n_points = 10000
-duration = 10 # 3 * n_species
+duration = 600 # 3 * n_species
+duration = 1200
 
-# np.random.seed(123)
-# species_pngs = sorted(glob.glob('species/critically endangered/*.png'))
-# species_pngs = list(np.random.permutation(species_pngs))
-# species_names = [png.split('\\')[-1].split('.')[0] for png in species_pngs]
+np.random.seed(123)
+species_pngs = sorted(glob.glob('species/critically endangered/*.png'))
+species_pngs = list(np.random.permutation(species_pngs))
+species_names = [png.split('\\')[-1].split('.')[0] for png in species_pngs]
+print(len(species_names))
 
-species_names = ['']
-print(f'Stipple image for species {species_names[0]}:')
-points = stipple_image_points(f'species/critically endangered/{species_names[0]}.png', n_points=n_points, scale_factor=1, max_iterations=100)
-np.save(f'species/np/{species_names[0]}', points)
+# species_names = ['Rhampholeon acuminatus']
+# print(f'Stipple image for species {species_names[0]}:')
+# points = stipple_image_points(f'species/critically endangered/{species_names[0]}.png', n_points=n_points, scale_factor=1, max_iterations=100)
+# np.save(f'species/np/{species_names[0]}', points)
 
 
 def dist(A, B):
@@ -48,12 +63,12 @@ def prepare_data():
     # points = stipple_image_points(f'extinction_symbol.png', n_points=n_points, scale_factor=1, max_iterations=100) * 1.5
     # np.save(f'species/np/_xr', points)
 
-    # # Stipple all the species images
-    # for png, name in zip(species_pngs, species_names):
-    #     if not os.path.isfile(f'species/np/{name}.npy'):
-    #         print(f'Stipple file {png} for species {name}:')
-    #         points = stipple_image_points(png, n_points=n_points, scale_factor=1, max_iterations=100)
-    #         np.save(f'species/np/{name}', points)
+    # Stipple all the species images
+    for png, name in zip(species_pngs, species_names):
+        if not os.path.isfile(f'species/np/{name}.npy'):
+            print(f'Stipple file {png} for species {name}:')
+            points = stipple_image_points(png, n_points=n_points, scale_factor=1, max_iterations=100)
+            np.save(f'species/np/{name}', points)
 
     # Find optimal transport between consecutive point clouds
     names = ['_xr', *species_names, '_xr']
@@ -148,11 +163,11 @@ def render_species(forced_names=[], thumbnail_size=(300,300), update_zip=False):
                 f.write(f'species/gallery/{name}.svg', f'{name}.svg')
 
 
-# image_paths = ['species/np/_xr.npy'] + [f'species/np/{name}_perm.npy' for name in species_names] + ['species/np/_xr_perm.npy']
-# coords = np.array([np.load(path) for path in image_paths]) * height/1500
-# coords = coords - (0, 25)
-# coords = np.repeat(coords, [3,] + [2] * (len(coords)-2) + [3,], axis=0)
-coords = np.load(f'species/np/{species_names[0]}.npy') * height/1500 - (0, 25)
+image_paths = ['species/np/_xr.npy'] + [f'species/np/{name}_perm.npy' for name in species_names] + ['species/np/_xr_perm.npy']
+coords = np.array([np.load(path) for path in image_paths]) * height/1500
+coords = coords + (width/2 - height/2, -25)
+coords = np.repeat(coords, [3,] + [2] * (len(coords)-2) + [3,], axis=0)
+# coords = np.load(f'species/np/{species_names[0]}.npy') * height/1500 - (0, 25)
 
 labels = ['', *species_names, '']
 
@@ -161,30 +176,30 @@ def make_frame(t):
     surface = gz.Surface(width, height)
     progress = t / duration
 
-    # # Species name
-    # label_idx = progress * (len(labels) - .5) - .25
-    # for i in range(len(labels)):
-    #     if np.abs(label_idx - i) < 1:
-    #         shade = np.exp(-(2.5*(label_idx - i))**6)
-    #         gz.text(labels[i],
-    #                 fontfamily='FUCXED CAPS', fontsize=48,
-    #                 fill=(.2,.2,.2,shade),
-    #                 xy=(width/2, height - 35),
-    #                 h_align='center', v_align='top').draw(surface)
+    # Species name
+    label_idx = progress * (len(labels) - .5) - .25
+    for i in range(len(labels)):
+        if np.abs(label_idx - i) < 1:
+            shade = np.exp(-(2.5*(label_idx - i))**6)
+            gz.text(labels[i],
+                    fontfamily='FUCXED CAPS', fontsize=48,
+                    fill=(.2,.2,.2,shade),
+                    xy=(width/2, height - 35),
+                    h_align='center', v_align='top').draw(surface)
 
-    # # Interpolated stipple points
-    # for i in range(len(coords[0])):
-    #     point = de_boor(progress * (len(coords) - 3) + 3, coords[:,i,:], degree=3)
-    #     gz.circle(xy=point, r=1.5, fill=(1,1,1)).draw(surface)
+    # Interpolated stipple points
+    for i in range(len(coords[0])):
+        point = de_boor(progress * (len(coords) - 3) + 3, coords[:,i,:], degree=3)
+        gz.circle(xy=point, r=1.5, fill=(1,1,1)).draw(surface)
 
-    gz.text(labels[1],
-            fontfamily='FUCXED CAPS', fontsize=48,
-            fill=(.2,.2,.2,1),
-            xy=(width/2, height - 35),
-            h_align='center', v_align='top').draw(surface)
+    # gz.text(labels[1],
+    #         fontfamily='FUCXED CAPS', fontsize=48,
+    #         fill=(.2,.2,.2,1),
+    #         xy=(width/2, height - 35),
+    #         h_align='center', v_align='top').draw(surface)
 
-    for i in range(len(coords)):
-        gz.circle(xy=coords[i,:], r=1.5, fill=(1,1,1)).draw(surface)
+    # for i in range(len(coords)):
+    #     gz.circle(xy=coords[i,:], r=1.5, fill=(1,1,1)).draw(surface)
 
     return surface.get_npimage()
 
@@ -208,8 +223,11 @@ mp4_params = {
 
 # Render animation
 if __name__ == '__main__':
+    pass
+
     # prepare_data()
-    save_poster(name, make_frame, t=0)
-    # render_webm(name, make_frame, duration, webm_params)
-    # convert_to_mp4(name, mp4_params)
-    render_species(species_names, update_zip=False)
+    # save_poster(name, make_frame, t=0)
+    render_webm(name, make_frame, duration, webm_params)
+    convert_to_mp4(name, mp4_params)
+    # render_species(species_names, update_zip=False)
+    # render_species([], update_zip=True)

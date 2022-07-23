@@ -37,7 +37,8 @@
 <body>
 
     <?php
-        $images = glob('*.png');
+        // Get all .png files except the favicon and sort them by upload date
+        $images = preg_grep('/favicon\.png$/', glob('*.png'), PREG_GREP_INVERT);
         usort($images, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
     ?>
 
@@ -50,12 +51,12 @@
             if(isset($_GET["svg"])) {
                 $zips = glob('endangered_species_svg_*.zip');
                 usort($zips, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
-                echo "<a href=".$zips[0].">Get ZIP file</a> | <a href='index.php' target='_self'>switch to PNG</a> | <a href='mailto:wapu@posteo.net'>Contact</a>";
+                echo "<a href=".$zips[0].">ZIP file</a> | <a href='index.php' target='_self'>PNG version</a> | <a href='https://vimeo.com/480221114' target='_blank'>Video</a> | <a href='mailto:wapu@posteo.net'>Contact</a>";
             }
             else {
                 $zips = glob('endangered_species_png_*.zip');
                 usort($zips, create_function('$a, $b', 'return filemtime($b) - filemtime($a);'));
-                echo "<a href=".$zips[0].">Get ZIP file</a> | <a href='index.php?svg' target='_self'>switch to SVG</a> | <a href='mailto:wapu@posteo.net'>Contact</a>";
+                echo "<a href=".$zips[0].">ZIP file</a> | <a href='index.php?svg' target='_self'>SVG version</a> | <a href='https://vimeo.com/480221114' target='_blank'>Video</a> | <a href='mailto:wapu@posteo.net'>Contact</a>";
             }
         ?>
     </p>
