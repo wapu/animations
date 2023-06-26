@@ -64,3 +64,67 @@ def icosphere(subdiv, return_faces=False):
         return np.array(verts), np.array(faces)
     else:
         return np.array(verts)
+
+
+
+# own code from here
+
+class Node():
+    def __init__(self, pos, neighbors=[], edges=[]):
+        self.pos = pos
+        self.neighbors = neighbors
+        self.edges = edges
+
+class Edge():
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+
+def split_node(node):
+    splits = []
+    for e in node.edges:
+        split = Node(Node.pos)
+        split.neighbors = list(splits)
+        split.edges = [Edge(split, n) for n in split.neighbors]
+        split.edges.append(e)
+        splits.append(split)
+
+
+def adjacency_from_faces(size, faces):
+    A = np.zeros((size, size), dtype=int)
+    for (i1, i2, i3) in faces:
+        A[i1, i2] = 1
+        A[i2, i1] = 1
+        A[i1, i3] = 1
+        A[i3, i1] = 1
+        A[i2, i3] = 1
+        A[i3, i2] = 1
+    return A
+
+def index_edges_from_A(A):
+    index_edges = []
+    for i in range(A.shape[0]):
+        for j in range(i):
+            if A[i,j] == 1:
+                index_edges.append((i,j))
+    return index_edges
+
+def icosphere_graph(verts, faces):
+    nodes = [Node(v) for v in verts]
+    A = adjacency_from_faces(len(nodes), faces)
+    index_edges = index_edges_from_A(A)
+
+    edges = []
+    for (i,j) in index_edges:
+        e = Edge(nodes[i], nodes[j])
+        edges.append(e)
+        nodes[i].neighbors.append(nodes[j])
+        nodes[j].neighbors.append(nodes[i])
+        nodes[i].edges.append(e)
+        nodes[j].edges.append(e)
+
+    return nodes, edges
+
+
+# n, e = icosphere_graph(*icosphere(0, return_faces=True))
+# print(len(n), len(e))
