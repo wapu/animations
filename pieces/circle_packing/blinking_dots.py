@@ -8,8 +8,8 @@ from geometry import *
 
 
 name = 'blinking_dots'
-width, height = 768, 768
-duration = 5
+width, height = 1024, 1024
+duration = 6
 
 
 
@@ -54,10 +54,12 @@ def make_frame(t):
 
     for i,(x,y,r) in enumerate(dots):
         r_ = (r-2) * (np.sin(progress*2*np.pi + phase[i]) + 1)/2
-        # Empty bubbles
-        gz.circle(xy=(x,y), r=r_, stroke_width=.25 + 0.75*(r_**2)/(r**2), stroke=(1,1,1), fill=None).draw(surface)
-        # Filles circles
-        # gz.circle(xy=(x,y), r=0.95*r_ + 1, stroke_width=0, fill=[1 - (r_**2)/(r**2)]*3).draw(surface)
+
+        # Empty bubbles variant
+        gz.circle(xy=(x,y), r=r_, stroke_width=.5 + (r_**2)/(r**2), stroke=(1,1,1), fill=None).draw(surface)
+
+        # Filled circles variant
+        # gz.circle(xy=(x,y), r=0.9*r_ + 1, stroke_width=0, fill=[1 - 0.95*((r_+2)**1.5)/(r**1.5)]*3).draw(surface)
 
     return surface.get_npimage()
 
