@@ -59,6 +59,7 @@ def make_frame(t):
 
 # Render animation
 if __name__ == '__main__':
+    pass
     save_poster(name, make_frame)
-    render_webm(name, make_frame, duration, webm_params)
-    convert_to_mp4(name, mp4_params)
+    # render_webm(name, make_frame, duration, webm_params)
+    # convert_to_mp4(name, mp4_params)
