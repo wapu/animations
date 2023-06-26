@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.spatial import distance_matrix
 
 import sys
 sys.path.insert(0, '../../tools')
@@ -22,9 +21,10 @@ def genererate_points():
 
 def solve_tsp():
     points = np.load(f'{name}.npy')
-    write_tsp_dist(f'{name}.tsp', distance_matrix(points, points) * 10000)
-    run_linkern(f'{name}.tsp', f'{name}.cyc', '../../tools/linkern.exe')
-    order = read_cyc(f'{name}.cyc')
+    # write_tsp_dist(f'{name}.tsp', squareform(pdist(points, points)) * 10000)
+    # run_linkern(f'{name}.tsp', f'{name}.cyc', '../../tools/linkern.exe')
+    # order = read_cyc(f'{name}.cyc')
+    order = solve_tsp_ortools(points)
     points = points[np.array(order)]
     np.save(f'{name}.npy', points)
 
@@ -40,7 +40,7 @@ def make_frame(t):
     points = np.load(f'{name}.npy') * r
 
     # line progress
-    segments = interval_progresses(progress, duration, ['ease_out', 'ease_in']*(duration//2))
+    segments = interval_progresses(progress, duration, ['hermite', 'hermite']*(duration//2))
     phase = np.floor(sum(segments)) % 4
     f_even = sum(segments[::4] + segments[1::4]) % 1
     f_odd = sum(segments[2::4] + segments[3::4]) % 1
@@ -94,9 +94,9 @@ def make_frame(t):
 
 # Render animation
 if __name__ == '__main__':
-    # genererate_points()
-    # solve_tsp()
+    genererate_points()
+    solve_tsp()
 
     save_poster(name, make_frame)
-    # render_webm(name, make_frame, duration, webm_params)
-    # convert_to_mp4(name, mp4_params)
+    render_webm(name, make_frame, duration, webm_params)
+    convert_to_mp4(name, mp4_params)
