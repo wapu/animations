@@ -40,6 +40,14 @@ def solve_tsp_ortools(points):
     return route[:-1]
 
 
+def write_cyc(route, output_path):
+    with open(output_path, 'w') as f:
+        f.write(f'{len(route)} {len(route)}\n')
+        for i in range(len(route) - 1):
+            f.write(f'{route[i]} {route[i+1]}\n')
+        f.write(f'{route[-1]} {route[0]}\n')
+
+
 # Remaining functions are for calling linkern.exe solver under Windows
 def write_tsp(output_path, coordinates):
     with open(output_path, 'w') as f:

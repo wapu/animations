@@ -79,7 +79,7 @@ def circle_from_three_points(p1, p2, p3):
 
     x = (u * (p2[1] - p3[1]) - v * (p1[1] - p2[1])) / d
     y = (v * (p1[0] - p2[0]) - u * (p2[0] - p3[0])) / d
-    radius = sqrt((p1[0] - x)**2 + (p1[1] - y)**2)
+    radius = np.sqrt((p1[0] - x)**2 + (p1[1] - y)**2)
     return (x,y), radius
 
 
@@ -139,7 +139,6 @@ def generate_harmonics(symmetry, n_harmonics):
     return harmonics
 
 
-# TODO: proper numpy
 def get_shape_from_harmonics(harmonics, n_points=512, method='lopez'):
     if method == 'lopez':
         points = []
@@ -162,20 +161,12 @@ def get_shape_from_harmonics(harmonics, n_points=512, method='lopez'):
         if len(harmonics[0]) == 5:
             harmonics = [(k, a_x, p_x) for (k, a_x, p_x, a_y, p_y) in harmonics]
 
-        points = []
-        t_delta = (2*np.pi) / (n_points - 1)
-
         mu_0 = sum([a * np.cos(p) for (k, a, p) in harmonics])
-
-        Z = 0 + 0j
-        for i in range(n_points):
-            t = i * t_delta
-
-            theta = -t + mu_0 + sum([a * np.cos(k*t - p) for (k, a, p) in harmonics])
-
-            Z += exp(1j * theta)
-
-            points.append(np.array([Z.imag, Z.real]))
+        h = np.array(harmonics)
+        ts = np.arange(n_points)[np.newaxis,:] * (2*np.pi) / (n_points - 1)
+        thetas = mu_0 - ts + np.sum(h[:,1,np.newaxis] * np.cos(h[:,0,np.newaxis] * ts - h[:,2,np.newaxis]), axis=0)
+        Zs = np.cumsum(np.exp(1j * thetas))
+        points = np.array([Zs.imag, Zs.real]).T
 
         return points
 

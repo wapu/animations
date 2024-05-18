@@ -60,19 +60,19 @@ def prepare_eye_shape():
 def stipple_image():
     points = stipple_image_points('eye_shape.png', n_points=1000, scale_factor=2, max_iterations=250)
     np.save('eye_stippled.npy', points)
-    write_tsp('eye_path.tsp', points)
 
 
 # Solve TSP problem
 def solve_tsp():
-    run_linkern('eye_path.tsp', 'eye_path.cyc', '../../tools/linkern.exe')
+    points = np.load('eye_stippled.npy')
+    route = solve_tsp_ortools(points)
+    write_cyc(route, 'eye_path.cyc')
     postprocess_cyc('eye_stippled.npy', 'eye_path.cyc', 'eye_processed.npy', (256, 256), segment_length=15, degree=3, radius=110./128.)
 
 
 # Prepare keyframes
 def prepare_keyframes(n_keyframes=30, n_vertices=24):
     base_points = np.load('eye_processed.npy')[::1]
-    print('Number of points:', len(base_points))
     center_and_scale(base_points, (height/2, width/2), width/2 * (110./128.))
 
     clip_poly_outer = eye.buffer(0, join_style=2, mitre_limit=20)
@@ -165,10 +165,10 @@ def make_frame(t):
 
 # Render animation
 if __name__ == '__main__':
-    # prepare_eye_shape()
-    # stipple_image()
-    # solve_tsp()
-    # prepare_keyframes()
+    prepare_eye_shape()
+    stipple_image()
+    solve_tsp()
+    prepare_keyframes()
 
     save_poster(name, make_frame)
     render_webm(name, make_frame, duration, webm_params)

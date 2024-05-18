@@ -1,7 +1,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.misc import imread
+from imageio import imread
 from scipy.ndimage import zoom
 from scipy.spatial import Voronoi, voronoi_plot_2d
 from scipy.ndimage.filters import gaussian_filter
