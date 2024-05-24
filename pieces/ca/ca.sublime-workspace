@@ -1,0 +1,777 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"n",
+				"n_egdes"
+			],
+			[
+				"colo",
+				"colormap"
+			],
+			[
+				"pyga",
+				"pygame_swarm"
+			],
+			[
+				"cn",
+				"contributions"
+			],
+			[
+				"dis",
+				"distance_matrix"
+			],
+			[
+				"eye",
+				"eye_stippled"
+			],
+			[
+				"Geschäfts",
+				"Geschäftszeichen"
+			],
+			[
+				"tr",
+				"fig:truncated-optimization"
+			],
+			[
+				"interp",
+				"interpretability"
+			],
+			[
+				"be",
+				"eq:best-solution-map"
+			],
+			[
+				"colorizatio",
+				"sec:colorization"
+			],
+			[
+				"verf",
+				"Verfahren"
+			],
+			[
+				"beschl",
+				"beschleunigtes"
+			],
+			[
+				"wass",
+				"wassergefährdender"
+			],
+			[
+				"Umwel",
+				"Umweltrecht"
+			],
+			[
+				"Stra",
+				"Straßenblockade"
+			],
+			[
+				"dist",
+				"distance_matrix"
+			],
+			[
+				"area",
+				"area_covered"
+			],
+			[
+				"cir",
+				"circle_packing"
+			],
+			[
+				"vali",
+				"valid_canonical"
+			],
+			[
+				"mo",
+				"model_inverse"
+			],
+			[
+				"train",
+				"train_configs"
+			],
+			[
+				"test",
+				"test_losses"
+			],
+			[
+				"ex",
+				"except"
+			],
+			[
+				"vis",
+				"vis_y_target"
+			],
+			[
+				"mod",
+				"model"
+			],
+			[
+				"I",
+				"IoU"
+			],
+			[
+				"curve",
+				"curves"
+			],
+			[
+				"con",
+				"config"
+			],
+			[
+				"model",
+				"model_inverse"
+			],
+			[
+				"conf",
+				"configs"
+			],
+			[
+				"avg",
+				"avg_h"
+			],
+			[
+				"lens",
+				"lens_arcs_from_params"
+			],
+			[
+				"check",
+				"check_plus_shape_fitting"
+			],
+			[
+				"pat",
+				"path_b"
+			],
+			[
+				"plusc",
+				"plus_curve_dense"
+			],
+			[
+				"Plus",
+				"PlusShapeModel"
+			],
+			[
+				"mean",
+				"mean_hausdorff_distance"
+			],
+			[
+				"inters",
+				"intersection_over_union"
+			],
+			[
+				"interse",
+				"intersection"
+			],
+			[
+				"seg",
+				"plus_segments_from_params"
+			],
+			[
+				"fit",
+				"fit_plus_shape_to_points"
+			],
+			[
+				"xysh",
+				"xyshifts"
+			],
+			[
+				"poi",
+				"points_normed"
+			],
+			[
+				"yl",
+				"yleft"
+			],
+			[
+				"corner",
+				"corner_weight"
+			],
+			[
+				"coen",
+				"corner_weight"
+			],
+			[
+				"true",
+				"true_plus_fourier"
+			],
+			[
+				"pl",
+				"plus_segments_from_params"
+			],
+			[
+				"poin",
+				"points_to_cross_score"
+			],
+			[
+				"xle",
+				"xleft"
+			],
+			[
+				"cla",
+				"clamp"
+			],
+			[
+				"s",
+				"sigma"
+			],
+			[
+				"Fac",
+				"FactorizedDirichletPrior"
+			],
+			[
+				"Ca",
+				"FactorizedCategoricalPrior"
+			],
+			[
+				"oneh",
+				"one_hot_in"
+			],
+			[
+				"on",
+				"one_hot_in"
+			],
+			[
+				"one",
+				"one_hot_in"
+			],
+			[
+				"logp",
+				"log_prob2"
+			],
+			[
+				"log",
+				"log_prob"
+			],
+			[
+				"pr",
+				"prior2"
+			],
+			[
+				"C",
+				"Categorical"
+			],
+			[
+				"lift",
+				"lift_map_jacobian_logdet"
+			],
+			[
+				"__",
+				"__init__"
+			],
+			[
+				"lo",
+				"logits"
+			],
+			[
+				"tens",
+				"Tensor"
+			],
+			[
+				"log_pro",
+				"log_prop_"
+			],
+			[
+				"prime",
+				"prime_field_mask"
+			],
+			[
+				"pri",
+				"prime_field_mask"
+			],
+			[
+				"scale",
+				"scaled_inputs"
+			],
+			[
+				"Bi",
+				"DiscreteBipartiteFlow"
+			],
+			[
+				"inv",
+				"inv_argmax"
+			],
+			[
+				"ne",
+				"n_epochs"
+			],
+			[
+				"keep",
+				"keepdim"
+			],
+			[
+				"tra",
+				"train"
+			],
+			[
+				"Tens",
+				"TensorDataset"
+			],
+			[
+				"In",
+				"InverseSimplexArgmax"
+			],
+			[
+				"batch",
+				"batch_losses_test"
+			],
+			[
+				"bat",
+				"batch_losses_train"
+			],
+			[
+				"meas",
+				"measure"
+			],
+			[
+				"dom",
+				"domain_prices"
+			],
+			[
+				"clas",
+				"class_"
+			],
+			[
+				"Inve",
+				"InverseSoftmax"
+			],
+			[
+				"Sim",
+				"SimplexDequantization"
+			],
+			[
+				"uci",
+				"uci_dataset"
+			],
+			[
+				"min",
+				"miniboone"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+		[
+			[
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					""
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Traditional"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - PdfLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - XeLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Basic Builder - LuaLaTeX"
+				],
+				[
+					"Packages/LaTeXTools/LaTeX.sublime-build",
+					"Script Builder"
+				]
+			],
+			[
+				"Packages/LaTeXTools/LaTeX.sublime-build",
+				"XeLaTeX"
+			]
+		],
+		[
+			[
+				[
+					"Packages/Python/Python.sublime-build",
+					""
+				],
+				[
+					"Packages/Python/Python.sublime-build",
+					"Syntax Check"
+				]
+			],
+			[
+				"Packages/Python/Python.sublime-build",
+				""
+			]
+		]
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"virt",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"virtual",
+				"Build With: Python + Virtualenv"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Install Package Control"
+			],
+			[
+				"packa",
+				"Install Package Control"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 120.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/jakob/Documents/animations/pieces/ca"
+	],
+	"file_history":
+	[
+		"/home/jakob/Documents/animations/pieces/ca/pygame_stage.py",
+		"/home/jakob/Documents/animations/pieces/ca/colors.py",
+		"/home/jakob/Documents/animations/pieces/ca/pygame_maze.py",
+		"/home/jakob/Documents/animations/pieces/ca/pygame_swarm.py",
+		"/home/jakob/Documents/animations/pieces/ca/pygame_birds.py",
+		"/home/jakob/Documents/animations/pieces/ca/ca.sublime-project",
+		"/home/jakob/Documents/animations/pieces/ca/bird2.txt",
+		"/home/jakob/Documents/animations/pieces/ca/bird1.txt",
+		"/home/jakob/Documents/animations/pieces/ca/ideen.txt",
+		"/home/jakob/Documents/animations/pieces/ca/live_swarm.py",
+		"/home/jakob/Documents/code/infinity_dodecahedron_animations/main_simulation.py",
+		"/home/jakob/Documents/code/infinity_dodecahedron_animations/main.py",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Hobby/CA_Vogel_2a.svg",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Hobby/CA_Vogel_2.svg",
+		"/home/jakob/Documents/animations/tools/svg_to_shapely.py",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Hobby/CA_Vogel_1.svg",
+		"/home/jakob/Documents/animations/pieces/fourier_curves/osculating_circles_1.py",
+		"/home/jakob/Documents/animations/pieces/multi_pinhole_diffraction/diffraction_1.py",
+		"/home/jakob/Documents/animations/pieces/multi_pinhole_diffraction/diffraction_2.py",
+		"/home/jakob/Documents/animations/pieces/multi_pinhole_diffraction/diffraction_3.py",
+		"/home/jakob/Documents/animations/tools/geometry.py",
+		"/home/jakob/Documents/animations/pieces/gears/epicyclic_gears.py",
+		"/home/jakob/Documents/animations/pieces/gears/loony_gears.py",
+		"/home/jakob/Documents/animations/pieces/fourier_curves/osculating_circles_2.py",
+		"/home/jakob/Documents/animations/pieces/gears/main.py",
+		"/home/jakob/Documents/animations/pieces/fourier_curves/elongated_segments.py",
+		"/home/jakob/Documents/animations/pieces/fourier_curves/trailing_shades.py",
+		"/home/jakob/Documents/animations/tools/rendering.py",
+		"/home/jakob/Documents/animations/pieces/voronoi_cells/main.py",
+		"/home/jakob/Documents/animations/tools/apollonius.py",
+		"/home/jakob/anaconda3/envs/main/lib/python3.11/site-packages/moviepy/video/VideoClip.py",
+		"/home/jakob/anaconda3/envs/main/lib/python3.11/site-packages/moviepy/decorators.py",
+		"/home/jakob/anaconda3/envs/main/lib/python3.11/site-packages/moviepy/video/io/ffmpeg_writer.py",
+		"/home/jakob/Documents/animations/tools/tsp.py",
+		"/home/jakob/Documents/animations/pieces/voronoi_cells/eye_path.cyc",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Code/animations/pieces/voronoi_cells/eye_path.cyc",
+		"/home/jakob/Documents/animations/pieces/tsp_art/brain.py",
+		"/home/jakob/Documents/animations/pieces/voronoi_stippling/hypnotoad.py",
+		"/home/jakob/Documents/animations/pieces/voronoi_stippling/animals.py",
+		"/home/jakob/Documents/animations/pieces/2d_fft/2d_fft_pulsing_circle.py",
+		"/home/jakob/Documents/animations/tools/stippling.py",
+		"/home/jakob/Documents/animations/pieces/maurer_rose/main.py",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/8-conclusion.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/6-artificial-data.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/5-extending-flow.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/main.tex",
+		"/home/jakob/Documents/animations/pieces/fourier_curves/rising_dots.py",
+		"/home/jakob/Downloads/jd/Laurine Model aka Nicholas Ferrer OnlyFans Vids/Laurine Model aka Nicholas Ferrer OnlyFans Vids/!!!Read me!.txt",
+		"/home/jakob/Documents/Projektplan.txt",
+		"/home/jakob/Documents/aktivismus/Fressgasse/Fressgasse Notizen.txt",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Dokumente/Justiz/Übersicht.txt",
+		"/home/jakob/Documents/aktivismus/2024-01-11 Protokoll Treffen zu HDC-Prozess.txt",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Dokumente/Justizkommunikation/Übersicht.txt",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/Übersicht.txt",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/4-posteriors.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/0-introduction.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/0a-notation.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/references.bib",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/main.bbl",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/2-inverse-problems.tex",
+		"/home/jakob/Documents/code/infinity_dodecahedron_animations/dodecahedron.py",
+		"/home/jakob/Documents/code/infinity_dodecahedron_animations/colors.py",
+		"/home/jakob/Documents/code/infinity_dodecahedron_animations/animations.py",
+		"/home/jakob/Documents/code/infinity_dodecahedron_animations/projection.py",
+		"/etc/ImageMagick-6/policy.xml",
+		"/media/jakob/bootfs/cmdline.txt",
+		"/media/jakob/bootfs/config.txt",
+		"/boot/config.txt",
+		"/home/jakob/Documents/justiz/2024-02-29 Prozess in Mannheim.txt",
+		"/home/jakob/Documents/justiz/2024-02-29 Einlassung und Plädoyer.txt",
+		"/home/jakob/Downloads/jd/dirty takefile stuff.dlc",
+		"/home/jakob/Documents/alfatraining/GIS/Notizen.txt",
+		"/etc/apt/sources.list.d/qgis.sources",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/3-best-solution.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/chapters/1-deep-learning.tex",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-05-04 Gedankenprotokoll.txt",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-05-02 Gedankenprotokoll.txt",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-05-05 Gedankenprotokoll.txt",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-05-15 Gedankenprotokoll.txt",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Hobby/Aktionskletter-Skillshare.txt",
+		"/run/user/1000/gvfs/smb-share:server=naschkatze.local,share=storage/Hobby/Fremde Texte/15 deep and meaningful questions.txt",
+		"/home/jakob/Documents/alfatraining/Umweltschutzberater.txt",
+		"/home/jakob/Documents/alfatraining/skript vortrag.txt",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/preamble.tex",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/thesis.sublime-project",
+		"/home/jakob/Documents/thesis/PhD Thesis Deep Learning Approaches to Ambiguous Inverse Problems/figures/FDN/more_results/sun_results.tex",
+		"/home/jakob/.config/sublime-text/Packages/LaTeXTools/Default (Linux).sublime-keymap",
+		"/home/jakob/.cache/.fr-KsfxjB/Serif/OFL.txt",
+		"/home/jakob/.cache/.fr-BWuwiT/Serif/OFL-FAQ.txt",
+		"/home/jakob/.cache/.fr-UrU1HC/Serif/README.txt",
+		"/home/jakob/.cache/.fr-T71qJl/README.txt",
+		"/etc/LatexMk",
+		"/usr/share/applications/defaults.list",
+		"/home/jakob/.config/sublime-text/Packages/User/LaTeXTools.sublime-settings",
+		"/home/jakob/Documents/justiz/2023-08-24 Fahrradunfall Gedächtnisprotokoll.txt",
+		"/home/jakob/Documents/spacy/2022 TSA 1/paleoclimate.txt",
+		"/home/jakob/Documents/spacy/2022 TSA 1/plots.py",
+		"/home/jakob/Documents/spacy/2022 TSA 1/code.py",
+		"/home/jakob/Documents/animations/pieces/circle_packing/apollonian_gasket_swirl.py",
+		"/home/jakob/Documents/animations/pieces/circle_packing/blinking_dots.py",
+		"/home/jakob/Documents/animations/pieces/lineart_3d/icosphere_snails.py",
+		"/home/jakob/Documents/animations/pieces/xr/xr_species_point_cloud.py",
+		"/home/jakob/Documents/animations/pieces/lineart_3d/icosidodecahedron.py",
+		"/home/jakob/Documents/animations/tools/icosphere.py",
+		"/home/jakob/Documents/animations/pieces/apollonian_gasket/blinking_dots.py",
+		"/home/jakob/Documents/animations/pieces/tsp_art/celtic_knot.py",
+		"/home/jakob/Documents/animations/pieces/apollonian_gasket/apollonian_gasket_swirl.py",
+		"/home/jakob/.config/sublime-text/Packages/User/Python (main).sublime-build",
+		"/home/jakob/Documents/misc/mathe.py",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-05-19 Gedankenprotokoll.txt",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-05-16 Gedankenprotokoll.txt",
+		"/run/user/1000/gvfs/afp-volume:host=NASchkatze.local,user=jakob,volume=Storage/Dokumente/Justizkommunikation/LG Mai 2023/2023-",
+		"/home/jakob/.local/share/thumbnailers/webp.thumbnailer",
+		"/home/jakob/.cache/.fr-XnWOga/epsonscan2-6.7.43.0-1/README",
+		"/home/jakob/.thunderbird/profiles.ini",
+		"/home/jakob/.thunderbird/installs.ini",
+		"/media/jakob/Platypus/profiles.ini",
+		"/media/jakob/Platypus/installs.ini",
+		"/etc/apt/sources.list.d/signal-xenial.list",
+		"/etc/apt/sources.list.d/archive_uri-https_download_sublimetext_com_-jammy.list",
+		"/etc/apt/keyrings/signal-desktop-archive.gpg",
+		"/home/jakob/.bashrc",
+		"/home/jakob/Documents/animations/README.md",
+		"/home/jakob/Documents/animations/.gitignore",
+		"/home/jakob/Documents/animations/tools/graph.py",
+		"/D/Dokumente/grow.py",
+		"/C/Users/Wurzel/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Wurzel/Desktop/Neues Textdokument.txt"
+	],
+	"find":
+	{
+		"height": 26.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"\n[",
+			"values",
+			"beat",
+			"BPM",
+			"swarm",
+			"beat_offset",
+			", \n",
+			",\n",
+			"[M],",
+			"\n",
+			",",
+			" ",
+			" Z ",
+			"Z",
+			"M",
+			"z",
+			",[",
+			"[\n",
+			",\n",
+			"]",
+			"[",
+			" ",
+			" L ",
+			"\n",
+			" L",
+			" z M ",
+			"np.newaxis",
+			"scale",
+			"np.newaxis",
+			"pi",
+			"np.newaxis"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 26.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 185.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.latextools":
+	{
+		"height": 126.0
+	},
+	"pinned_build_system": "Packages/User/Python (main).sublime-build",
+	"project": "ca.sublime-project",
+	"replace":
+	{
+		"height": 48.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 208.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

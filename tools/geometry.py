@@ -195,6 +195,16 @@ def de_boor(t, points, degree, i=None, n=None):
     alpha = float(t - i) / (n + 1 - degree)
     return (1 - alpha) * de_boor(t, points, degree - 1, i = i - 1, n = n) + alpha * de_boor(t, points, degree - 1, i = i, n = n)
 
+def de_boor_np(t, points, degree, i=None, n=None):
+    if i is None: i = t.astype(int)
+    if n is None: n = degree
+
+    if degree == 0:
+        return points[i % len(points)]
+
+    alpha = ((t - i) / (n + 1 - degree))[:,None]
+    return (1 - alpha) * de_boor_np(t, points, degree-1, i=i-1, n=n) + alpha * de_boor_np(t, points, degree-1, i=i, n=n)
+
 
 # TODO: use shapely
 # adapted from https://gist.github.com/danieljfarrell/faf7c4cafd683db13cbc

@@ -1,9 +1,16 @@
 import numpy as np
 import subprocess
+import fast_tsp
 from scipy.spatial.distance import pdist, squareform
 from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 
 from geometry import *
+
+
+def solve_tsp_fast(points, duration_seconds=2.0):
+    distance_matrix = (squareform(pdist(points)) * 10000).astype(int)
+    route = fast_tsp.find_tour(distance_matrix, duration_seconds)
+    return route
 
 
 # See https://developers.google.com/optimization/routing/tsp
@@ -94,20 +101,31 @@ def postprocess_cyc(input_path, cycle_path, output_path, size, segment_length=4,
         height, width = size
         center_and_scale(points, (height/2, width/2), min(height, width)/2 * radius)
 
-    points2 = np.zeros(points.shape)
-    for i in range(len(points)):
-        points2[i,:] = points[cycle[i],:]
+    points_ordered = points[cycle]
 
-    final_points = []
-    for i in range(len(cycle)):
-        p1 = points[cycle[i],:]
-        p2 = points[cycle[(i+1) % len(cycle)],:]
+    points_equal = []
+    for i in range(len(points_ordered)):
+        p1 = points_ordered[i]
+        p2 = points_ordered[(i+1) % len(points_ordered)]
 
         d = np.sqrt(np.sum(np.square(p1 - p2)))
         subdivisions = int(np.ceil(d / segment_length))
 
-        for j in range(subdivisions):
-            t = i + float(j)/subdivisions
-            final_points.append(de_boor(t, points2, degree))
+        for j in np.arange(subdivisions)/subdivisions:
+            points_equal.append((1-j)*p1 + j*p2)
+
+    final_points = de_boor_np(np.arange(len(points_equal)), np.array(points_equal), degree)
+
+    # final_points = []
+    # for i in range(len(cycle)):
+    #     p1 = points_ordered[i]
+    #     p2 = points_ordered[(i+1) % len(points_ordered)]
+
+    #     d = np.sqrt(np.sum(np.square(p1 - p2)))
+    #     subdivisions = int(np.ceil(d / segment_length))
+
+    #     for j in range(subdivisions):
+    #         t = i + float(j)/subdivisions
+    #         final_points.append(de_boor(t, points_ordered, degree))
 
     np.save(output_path, np.array(final_points))

@@ -1,0 +1,31 @@
+draufsicht mit altbau, punktbau und L-bau
+seitensicht mit blinkenden fenstern und holzgittern
+poly-vögel (und -ratten)
+    tsp
+    kanten abfahren (chinese postman)
+    polygone fliegen rein oder weg
+    tesselation
+turm-kontur
+    als schneeflocke (osculating circles?)
+    kaleidoskop
+schriftzug
+    stippling-sequenz der buchstaben
+    CLLGM CDMCM - OEIU AAEIU
+    alle Worte die mit CA anfangen (oder KA oderr ZA oder CHA)
+fräse-fahrt für neubauschrank
+zoom auf maps
+wireframe drehend und mit verzerrungen
+rohrbach wappen
+    ror
+    wellenlinien
+übel dumm
+d&s kranlogos überall (diringer und scheidel)
+frontansicht schrank (tür + schubladen mit grifflöchern)
+matrix-glyphen (digital rain)
+    DK, Herz, Hammer&Sichel, Anarchie, Vögel, CA, Hanfblatt, Glockenturm, Noten, r o r, grundriss
+
+uhren (bpm und echte zeit) als apollinian gasket
+
+CLLGM CDMCM - schatten durch spotlights
+ror - blitze?
+vogel - explosion

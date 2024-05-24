@@ -1,0 +1,19 @@
+{
+   "folders":
+   [
+      {
+         "path": "."
+      },
+   ],
+   "build_systems":
+   [
+      {
+         "name": "ca",
+         "cmd":
+         [
+            "/home/jakob/anaconda3/envs/main/bin/python",
+            "pygame_stage.py"
+         ]
+      }
+   ]
+}
