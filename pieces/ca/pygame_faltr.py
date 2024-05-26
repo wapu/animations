@@ -41,8 +41,10 @@ class Faltr():
 
 
     def reset(self):
+        self.intensity = 0
         self.progress = 0
         self.highlights = []
+        self.mode = 0
 
         # Set up initial positions and alternating group membership for crawlers
         offsets = []
@@ -53,39 +55,32 @@ class Faltr():
         self.offsets = np.array(offsets)
         self.groups = np.array([(x+y)%2 for y in range(self.n_y) for x in range(self.n_x)])
 
+        self.tilt = get_rotation_matrix(0.05 * np.cos(2*np.pi * time()/8 - np.pi/2))
+        self.sway = np.array([200 * np.cos(2*np.pi * time()/8), 50 * np.sin(2*np.pi * time()/4)])
+        self.switch_time = time()
+        self.sway_lag = 0
+
         # Initial colors
         self.hues = np.array([(0.25*(0.5 + 0.5*np.sin(2*np.pi * x/self.n_x)) + 0.05*y)%1 for y in range(self.n_y) for x in range(self.n_x)])
 
 
-    def event(self):
-        pass
+    def event(self, num):
+        if self.mode == 0:
+            self.switch_time = time()
+            self.mode = 1
+        elif self.mode == 1:
+            self.sway_lag += time() - self.switch_time
+            self.mode = 0
 
 
     def clear_frame(self, screen):
-        screen.fill([200]*3, special_flags=pygame.BLEND_MULT)
+        if self.mode == 0:
+            screen.fill([200]*3, special_flags=pygame.BLEND_MULT)
+        if self.mode == 1:
+            screen.fill([0]*3)
 
 
-    def update(self, bpm, last_beat, delta_t):
-        self.progress = np.minimum(1, ((time() - last_beat) % (60/bpm)) * bpm / 60)
-        self.hues += 0.005
-
-        # Tilt and sway for "drunk" effect
-        self.tilt = get_rotation_matrix(0.05 * np.cos(2*np.pi * time()/8 - np.pi/2))
-        self.sway = np.array([200 * np.cos(2*np.pi * time()/8), 50 * np.sin(2*np.pi * time()/4)])
-
-        # Crawlers that went out on the right get reset to the left
-        for i in range(len(self.offsets)):
-            if self.offsets[i,0] > self.width:
-                self.offsets[i,0] -= self.n_x * 450
-
-        # Limit FPS to BPM for everything below
-        if time() - last_beat < 60/bpm:
-            self.last_update = last_beat
-            return
-        if time() - self.last_update < 60/bpm:
-            return
-        self.last_update += 60/bpm
-
+    def beat(self, t):
         # Pick new highlights
         self.highlights = np.random.randint(len(self.offsets), size=10)
 
@@ -95,8 +90,23 @@ class Faltr():
         self.groups = 1 - self.groups
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
-        p = hermite(self.progress)
+    def update(self, t, beat_progress, measure_progress, bpm):
+        self.hues += 0.005
+
+        # Tilt and sway for "drunk" effect
+        if self.mode == 0:
+            time = t - self.sway_lag
+            self.tilt = get_rotation_matrix(0.05 * np.cos(2*np.pi * time/8 - np.pi/2))
+            self.sway = np.array([200 * np.cos(2*np.pi * time/8), 50 * np.sin(2*np.pi * time/4)])
+
+        # Crawlers that went out on the right get reset to the left
+        for i in range(len(self.offsets)):
+            if self.offsets[i,0] > self.width:
+                self.offsets[i,0] -= self.n_x * 450
+
+
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        p = hermite(beat_progress)
 
         # Polygons for group 0
         x0 = (1-p) * self.xs + p * self.xl
@@ -109,6 +119,7 @@ class Faltr():
         polys1 = np.array([[[x1[-i], y1[-i]], [x1[-i], y1[-i] + self.h], [x1[-i-1], y1[-i-1] + self.h], [x1[-i-1], y1[-i-1]]] for i in range(1, len(self.xs))])
 
         # Draw all polygons at respective offsets
+        screen.lock()
         for i in range(len(self.offsets)):
             polys = polys0 if self.groups[i] == 0 else polys1
             hue_shift = ((1-p) * 0.1) if self.groups[i] == 0 else (p * 0.1)
@@ -123,5 +134,7 @@ class Faltr():
                 else:
                     fill = np.zeros(3)
                     border = hls_to_rgb(self.hues[i] + hue_shift, 0.3, 0.8)
-                pygame.draw.polygon(screen, fill*brightness, rotate_around(poly, self.tilt, self.center) + self.sway)
-                pygame.draw.aalines(screen, border*brightness, True, rotate_around(poly, self.tilt, self.center) + self.sway)
+                poly = rotate_around(poly, self.tilt, self.center) + self.sway
+                pygame.draw.polygon(screen, fill*brightness, poly)
+                pygame.draw.aalines(screen, border*brightness, True, poly)
+        screen.unlock()

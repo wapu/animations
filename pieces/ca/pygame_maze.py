@@ -26,12 +26,14 @@ def hue_from_time(interval=20.0):
 class Maze():
 
     def __init__(self, width, height):
+        self.center = np.array([width/2, height/2])
+
         # Constants
         self.density = 0.6
 
         # Create diagonal grid
         d = 10
-        mesh = np.mgrid[25:width-15:d, 25:height-15:d]
+        mesh = np.mgrid[25:width-15:d, 25:height-5:d]
         self.mesh = np.transpose(mesh, (1,2,0))
         self.n_egdes = self.mesh.shape[0] * self.mesh.shape[1]
         starts_l = self.mesh + np.array([-d/2, -d/2])
@@ -73,17 +75,21 @@ class Maze():
 
     def reset(self):
         # Init variables
+        self.intensity = 0
+        self.mode = 0
         self.max_value = 200
         self.values = np.zeros(self.n_egdes)
         self.hues = np.zeros(self.n_egdes)
-        self.last_update = time()
         self.frontier = []
-        for i in range(5):
-            self.seed()
+
+        dists = np.linalg.norm(np.array([1, 1.6]) * (self.center - (self.coords[:,:2] + self.coords[:,2:])/2), axis=-1)
+        for i in range(self.n_egdes):
+            if 0.75 * self.center[0] < dists[i] + 40*np.random.randn() < 0.752 * self.center[0]:
+                self.frontier.extend(self.neighbors[i])
 
 
-    def event(self):
-        pass
+    def event(self, num):
+        self.mode = 1 - self.mode
 
 
     def clear_frame(self, screen):
@@ -101,15 +107,7 @@ class Maze():
             self.frontier.extend(self.neighbors[i])
 
 
-    def update(self, bpm, last_beat, delta_t):
-        # Limit FPS to BPM
-        if time() - last_beat < 60/bpm:
-            self.last_update = last_beat
-            return
-        if time() - self.last_update < 60/bpm:
-            return
-        self.last_update += 60/bpm
-
+    def beat(self, t):
         # Spawn new seeds if frontier almost empty and at random
         if len(self.frontier) < 5 or np.random.rand() < 0.05:
             self.seed()
@@ -129,13 +127,22 @@ class Maze():
         self.frontier = new_frontier
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
+    def update(self, t, beat_progress, measure_progress, bpm):
         self.values -= bpm/250
         self.hues = (self.hues + (bpm/60) * 0.001) % 1.0
-        beat_cos = 0.5 - 0.5*np.cos(2*np.pi * (time() - self.last_update) / (60/bpm))
 
+
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        beat_cos = 0.5 - 0.5*np.cos(2*np.pi * beat_progress)
+        vals = np.arange(self.max_value + 1)
+        l = 0.6 * (vals/self.max_value)**1.2 + 0.4 * beat_cos * np.exp(-(self.max_value - vals)**2 / 20)
+
+        screen.lock()
         for i in range(self.n_egdes):
             if self.values[i] > 0 and not np.isnan(self.hues[i]):
-                l = 0.6 * (self.values[i]/self.max_value)**1.2 + 0.4 * beat_cos * np.exp(-(self.max_value - self.values[i])**2 / 20)
-                color = hls_to_rgb(self.hues[i], l*brightness, 1)
-                pygame.draw.aaline(screen, color.astype(int), self.coords[i,:2], self.coords[i,2:])
+                color = hls_to_rgb(self.hues[i], l[int(self.values[i])] * brightness)
+                if self.mode == 0:
+                    pygame.draw.line(screen, color, self.coords[i,:2], self.coords[i,2:])
+                else:
+                    pygame.draw.circle(screen, color, (self.coords[i,:2] + self.coords[i,2:])/2, radius=2)
+        screen.unlock()

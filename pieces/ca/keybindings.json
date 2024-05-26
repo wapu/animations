@@ -1,0 +1,38 @@
+{
+    "exit": "escape",
+    "toggle pause": "p",
+    "toggle info": "i",
+    "toggle help": "h",
+
+    "next animation": "right",
+    "previous animation": "left",
+    "reset animation": "r",
+    "increase intensity": "page up",
+    "decrease intensity": "page down",
+    "event 1": "keypad 1",
+    "event 2": "keypad 2",
+    "event 3": "keypad 3",
+    "event 4": "keypad 4",
+    "event 5": "keypad 5",
+    "event 6": "keypad 6",
+    "event 7": "keypad 7",
+    "event 8": "keypad 8",
+    "event 9": "keypad 9",
+
+    "increase bpm": "up",
+    "decrease bpm": "down",
+    "synch beat": "space",
+    "0": "0",
+    "1": "1",
+    "2": "2",
+    "3": "3",
+    "4": "4",
+    "5": "5",
+    "6": "6",
+    "7": "7",
+    "8": "8",
+    "9": "9",
+
+    "increase brightness": "[+]",
+    "decrease brightness": "[-]"
+}

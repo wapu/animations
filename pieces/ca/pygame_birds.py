@@ -29,8 +29,6 @@ def rotate_around(poly, angle, anchor):
 class Bird_1():
 
     def __init__(self, width, height):
-        self.n_shadows = 30
-
         self.bird = [
             np.array([[5.8354688, -0.00046875], [25.638203, 7.7241406], [50.921406, 1.5405469], [5.8354688, -0.00046875]]),
             np.array([[51.206562, 2.6323437], [26.671406, 8.7436719], [32.388203, 14.403828], [37.239766, 13.790547], [44.745625, 17.222188], [51.206562, 2.6323437]]),
@@ -46,6 +44,9 @@ class Bird_1():
         ]
         self.bird = [8*poly + np.array([600, 200]) for poly in self.bird]
 
+        self.center = np.mean([c for poly in self.bird for c in poly], axis=0)
+
+        self.n_shadows = 30
         self.shadows = []
         for s in np.linspace(6, 1, self.n_shadows):
             self.shadows.append([scale(poly, s) for poly in self.bird])
@@ -54,46 +55,60 @@ class Bird_1():
 
 
     def reset(self):
+        self.intensity = 0
+        self.burst = 0
         self.angle_phases = 2*np.pi * np.random.rand(len(self.bird))
         self.scale_phases = 2*np.pi * np.random.rand(len(self.bird))
 
 
-    def event(self):
-        pass
+    def event(self, num):
+        self.burst = 0.8
 
 
     def clear_frame(self, screen):
         screen.fill((0,0,0))
 
 
-    def update(self, bpm, last_beat, delta_t):
-        spb = 60/bpm
-        t = 2*np.pi * (time() % spb) / spb
-        self.angles = 2*np.pi * (2/360) * np.sin(t + self.angle_phases)
-        self.scales = 1 + 0.1 * np.sin(t + self.scale_phases)
+    def beat(self, t):
+        pass
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
-        spb = 60/bpm
+    def update(self, t, beat_progress, measure_progress, bpm):
+        self.burst *= 0.9
+
+        self.angles = 2*np.pi * (2/360) * np.sin(beat_progress + self.angle_phases)
+        self.scales = 1 + 0.1 * np.sin(beat_progress + self.scale_phases)
+
+
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        screen.lock()
+
         for i, layer in enumerate(self.shadows):
             for j, shadow in enumerate(layer):
-                t = 2*np.pi * (time() % spb) / spb - 0.2*i
-                a = 2*np.pi * (2/360) * np.sin(t + self.angle_phases[j])
-                s = 1 + 0.05 * np.sin(t + self.scale_phases[j])
-                pygame.draw.polygon(screen, (0,0,0), scale(rotate(shadow, a), s))
-                hue = ((time()+0.05*i)%3)/3
+                time = 2*np.pi * beat_progress - 0.2*i
+                a = 2*np.pi * (2/360) * np.sin(time + self.angle_phases[j])
+                s = 1 + 0.05 * np.sin(time + self.scale_phases[j])
+                shadow = shadow + self.burst*(np.mean(shadow, axis=0) - self.center)
+                p = scale(rotate(shadow, a), s)
+                hue = ((t + 0.05*i) % 3) / 3
                 lightness = 0.8 * (i/self.n_shadows)**1.3
-                pygame.draw.aalines(screen, hls_to_rgb(hue, lightness*brightness, 1), True, scale(rotate(shadow, a), s))
+                pygame.draw.polygon(screen, (0,0,0), p)
+                pygame.draw.aalines(screen, hls_to_rgb(hue, lightness * brightness, 1), True, p)
 
         for i, poly in enumerate(self.bird):
-            pygame.draw.polygon(screen, (0,0,0), scale(rotate(poly, self.angles[i]), self.scales[i]))
-            pygame.draw.polygon(screen, [255*brightness]*3, scale(rotate(poly, self.angles[i]), self.scales[i]), width=2)
+            poly = poly + self.burst*(np.mean(poly, axis=0) - self.center)
+            p = scale(rotate(poly, self.angles[i]), self.scales[i])
+            pygame.draw.polygon(screen, (0,0,0), p)
+            pygame.draw.polygon(screen, [255*brightness]*3, p, width=2)
+
+        screen.unlock()
 
 
 
 class Bird_2():
 
     def __init__(self, width, height):
+        self.w, self.h = width, height
         self.center = np.array([width/2, height/2])
 
         bird = [
@@ -113,39 +128,39 @@ class Bird_2():
 
 
     def reset(self):
-        self.last_update = time()
+        self.intensity = 0
         self.stage = 0
+        self.mode = 0
 
 
-    def event(self):
-        pass
+    def event(self, num):
+        self.mode = 1 - self.mode
 
 
     def clear_frame(self, screen):
         screen.fill((0,0,0))
 
 
-    def update(self, bpm, last_beat, delta_t):
-        # Limit FPS to BPM
-        if time() - last_beat < 60/bpm:
-            self.last_update = last_beat
-            return
-        if time() - self.last_update < 60/bpm:
-            return
-        self.last_update += 60/bpm
-
+    def beat(self, t):
         self.stage = (self.stage + 1) % 8
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
+    def update(self, t, beat_progress, measure_progress, bpm):
+        pass
 
+
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        screen.lock()
         for i, bird in enumerate(self.birds):
-            beat_cos = 0.5 - 0.5*np.cos(2*np.pi * (time() - last_beat) / (60/bpm) + 4*np.pi*i/9)
+            beat_cos = 0.5 - 0.5*np.cos(2*np.pi * beat_progress + 4*np.pi*i/9)
             for j, poly in enumerate(bird):
                 dist = np.linalg.norm(poly.mean(axis=0) - self.center)
-                hue = (dist/1000 + i/9 + (time()%2)/2) % 1
+                hue = (dist/1000 + i/9 + (t%2)/2) % 1
                 lightness = 0.8 if self.stage == j else 0.3
-                poly_ = scale_around(rotate_around(poly, -0.75 * time(), self.center), 1 + 0.05 * beat_cos, self.center)
+                poly_ = scale_around(rotate_around(poly, -0.75 * t, self.center), 1 + 0.05 * beat_cos, self.center)
+                if self.mode == 1:
+                    poly_[:,0] = self.w - poly_[:,0]
                 pygame.draw.polygon(screen, hls_to_rgb(hue, lightness*brightness, 1), poly_, width=2)
                 pygame.draw.polygon(screen, hls_to_rgb(hue, lightness*brightness * 2/3, 1), scale(poly_, 2/3), width=1)
                 pygame.draw.polygon(screen, hls_to_rgb(hue, lightness*brightness * 1/3, 1), scale(poly_, 1/3), width=1)
+        screen.unlock()

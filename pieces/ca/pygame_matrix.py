@@ -34,7 +34,8 @@ class Matrix():
         self.h = height
 
         self.font_size = 20
-        self.fonts = ['Dyuthi', 'Chilanka', 'Sakurata', 'Sakurata', 'Sakurata', 'Sakurata', 'Sakurata']
+        # self.fonts = ['Dyuthi', 'Chilanka', 'Sakurata', 'Sakurata', 'Sakurata', 'Sakurata', 'Sakurata']
+        self.fonts = ['Sakurata', 'Chilanka']
         self.drops_per_beat = 4
 
         self.sequence = 'RAMBACAMBA '
@@ -45,7 +46,9 @@ class Matrix():
 
 
     def reset(self):
-        self.font = pygame.font.SysFont(np.random.choice(self.fonts), self.font_size)
+        self.intensity = 0
+        self.i_font = 0
+        self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_size)
 
         self.letters = np.arange(self.n_x * self.n_y).reshape(self.n_x, self.n_y) % len(self.sequence)
         for x in range(self.n_x):
@@ -61,38 +64,16 @@ class Matrix():
         self.spike = np.zeros(self.n_y)
 
 
-    def event(self):
-        self.font = pygame.font.SysFont(np.random.choice(self.fonts), self.font_size)
+    def event(self, num):
+        self.i_font = 1 - self.i_font
+        self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_size)
 
 
     def clear_frame(self, screen):
         screen.fill((0,0,0))
 
 
-    def update(self, bpm, last_beat, delta_t):
-        # Move and apply all drops
-        for drop in self.drops:
-            x, y, speed, flipped, rotation, letter, hue = drop
-            x, y = int(x), int(y)
-            self.letters[x,y] = (letter + y) % len(self.sequence)
-            self.age[x,y] = time()
-            self.flipped[x,y] = flipped
-            self.rotation[x,y] = rotation
-            self.hue[x,y] = hue + self.hue_offset[x,y]
-            drop[1] += speed
-
-        # Remove drops that leave the screen
-        self.drops = [drop for drop in self.drops if int(drop[1]) < self.n_y]
-
-
-        # Limit FPS to BPM for everything below
-        if time() - last_beat < 60/bpm:
-            self.last_update = last_beat
-            return
-        if time() - self.last_update < 60/bpm:
-            return
-        self.last_update += 60/bpm
-
+    def beat(self, t):
         # Add new drops
         for i in range(np.random.randint(1, self.drops_per_beat+1)):
             column = np.random.randint(self.n_x)
@@ -100,7 +81,7 @@ class Matrix():
             flipped = np.random.randint(2)
             rotation = np.random.randint(3) - 1
             letter = np.random.randint(len(self.sequence))
-            hue = (time()%10)/10
+            hue = (t % 10) / 10
             self.drops.append([column, 0.0, speed, flipped, rotation, letter, hue])
 
         # Apply glitches
@@ -117,10 +98,25 @@ class Matrix():
         self.spike = spike_pattern(self.n_y, self.font_size)
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
-        t = (time() - last_beat) / (60/bpm)
-        beat_cos = 0.5 - 0.5*np.cos(2*np.pi * t)
-        beat_spike = np.exp(-((t/2 - np.round(t/2))*20)**2)
+    def update(self, t, beat_progress, measure_progress, bpm):
+        # Move and apply all drops
+        for drop in self.drops:
+            x, y, speed, flipped, rotation, letter, hue = drop
+            x, y = int(x), int(y)
+            self.letters[x,y] = (letter + y) % len(self.sequence)
+            self.age[x,y] = t
+            self.flipped[x,y] = flipped
+            self.rotation[x,y] = rotation
+            self.hue[x,y] = hue + self.hue_offset[x,y]
+            drop[1] += speed
+
+        # Remove drops that leave the screen
+        self.drops = [drop for drop in self.drops if int(drop[1]) < self.n_y]
+
+
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        beat_cos = 0.5 - 0.5*np.cos(2*np.pi * beat_progress)
+        beat_spike = np.exp(-((beat_progress/2 - np.round(beat_progress/2))*20)**2)
 
         for x in range(self.n_x):
             for y in range(self.n_y):
@@ -128,7 +124,7 @@ class Matrix():
                 if time() - self.age[x,y] < 0.05:
                     lightness = 0.5 + 0.5 * beat_cos
                 else:
-                    lightness = 0.5 * np.exp(-(time() - self.age[x,y])**2 / 3) * (0.8 + 0.2*beat_cos)
+                    lightness = 0.5 * np.exp(-(t - self.age[x,y])**2 / 3) * (0.8 + 0.2 * beat_cos)
                 color = hls_to_rgb(self.hue[x,y], lightness * brightness, .7)
                 l = self.font.render(letter, True, color)
                 l = pygame.transform.flip(l, self.flipped[x,y] == 1, False)

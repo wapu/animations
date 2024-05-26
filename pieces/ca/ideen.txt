@@ -1,3 +1,8 @@
+all animations:
+    have 2 different "one time" effects
+    have 2 (better 4) different (escalating) modes
+
+
 draufsicht mit altbau, punktbau und L-bau
 seitensicht mit blinkenden fenstern und holzgittern
 poly-vögel (und -ratten)
@@ -24,8 +29,8 @@ frontansicht schrank (tür + schubladen mit grifflöchern)
 matrix-glyphen (digital rain)
     DK, Herz, Hammer&Sichel, Anarchie, Vögel, CA, Hanfblatt, Glockenturm, Noten, r o r, grundriss
 
+
 uhren (bpm und echte zeit) als apollinian gasket
 
-CLLGM CDMCM - schatten durch spotlights
 ror - blitze?
-vogel - explosion
+ratte - explosion

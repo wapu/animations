@@ -75,10 +75,11 @@ class Swarm():
 
 
     def reset(self):
+        self.intensity = 0
         self.guide = self.guides[np.random.randint(len(self.guides))]
 
 
-    def event(self):
+    def event(self, num):
         to_center = self.WH/2 - self.coords
         to_center = to_center / np.linalg.norm(to_center)
         self.vs = -50 * to_center
@@ -90,7 +91,11 @@ class Swarm():
         screen.fill((0,0,0))
 
 
-    def update(self, bpm, last_beat, delta_t):
+    def beat(self, t):
+        pass
+
+
+    def update(self, t, beat_progress, measure_progress, bpm):
         # Move
         self.coords = np.mod(self.coords + self.vs, self.WH)
 
@@ -118,10 +123,9 @@ class Swarm():
         self.v_max_tmp *= 0.98
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
-        interval = 4 * 60/bpm
-        hue_shift = (time() % interval) / interval
-        beat_cos = 0.5 - 0.5*np.cos(2*np.pi * (time() - last_beat) / (60/bpm))
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        hue_shift = measure_progress
+        beat_cos = 0.5 - 0.5*np.cos(2*np.pi * beat_progress)
 
         # Lines
         # D_rbf = np.exp(-(self.D / (self.dist/4))**2)

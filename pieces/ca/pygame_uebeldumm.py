@@ -50,7 +50,7 @@ class UebelDumm():
 
 
     def reset(self):
-        self.last_update = time()
+        self.intensity = 0
 
         self.bg_lightup = 0
         self.locations = np.tile(np.random.randint(len(self.points), size=(self.n_dots, 1)), (1, self.trail)).astype(float)
@@ -59,7 +59,7 @@ class UebelDumm():
         self.bg_res = 0
 
 
-    def event(self):
+    def event(self, num):
         self.bg_lightup = 1
 
 
@@ -67,35 +67,28 @@ class UebelDumm():
         screen.fill((0,0,0))
 
 
-    def update(self, bpm, last_beat, delta_t):
+    def beat(self, t):
+        self.locations[:,0] -= 5
+        self.bg_res = (self.bg_res - 1) % 4
+
+
+    def update(self, t, beat_progress, measure_progress, bpm):
         self.locations[:,1:] = self.locations[:,:-1]
         self.locations[:,0] += self.speeds
         self.dash_offset = (self.dash_offset - 0.2) % (len(self.points)/self.n_dashes)
         self.bg_lightup *= 0.9
 
-        # Limit FPS to BPM for everything below
-        if time() - last_beat < 60/bpm:
-            self.last_update = last_beat
-            return
-        if time() - self.last_update < 60/bpm:
-            return
-        self.last_update += 60/bpm
 
-        self.locations[:,0] -= 5
-        self.bg_res = (self.bg_res - 1) % 4
-
-
-    def draw(self, screen, bpm, last_beat, brightness):
-        t = time()
-        progress = ((t - last_beat) % (60/bpm)) / (60/bpm)
-        progress_2 = (((t - last_beat)/2) % (60/bpm)) / (60/bpm)
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
+        progress = beat_progress
+        progress_2 = (2 * measure_progress) % 1
 
         bg = scale_around(self.bg, 0.98 + 0.01 * progress, self.center)
         points = self.points + 10*np.array([-np.cos(2*np.pi * progress_2), -np.abs(np.sin(2*np.pi * progress_2))])
         points = scale_around(points, 1 - 0.02 * progress, self.center)
         dots = [de_boor_np(self.locations[:,i] % len(points), points) for i in range(self.trail)]
 
-        pygame.draw.lines(screen, hls_to_rgb(1, (0.02 + self.bg_lightup) * brightness, 0), False, bg[::self.bg_res + 1], width=3)
+        pygame.draw.lines(screen, hls_to_rgb(1, (0.02 + self.bg_lightup) * brightness, 0), True, bg[::self.bg_res + 1], width=3)
 
         for d in range(self.n_dots):
             hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*(self.locations[d,0]%len(points)) / len(points) + 0.5*t))) % 1
@@ -114,8 +107,6 @@ class UebelDumm():
             hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*(self.locations[d,0]%len(points)) / len(points) + 0.5*t))) % 1
             pygame.draw.circle(screen, hls_to_rgb(hue, 0.5 * brightness), dots[0][d], radius=4)
             pygame.draw.circle(screen, (0,0,0), dots[0][d], radius=3)
-
-        print(time() - t)
 
 
 if __name__ == '__main__':

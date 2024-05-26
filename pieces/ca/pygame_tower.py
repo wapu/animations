@@ -79,14 +79,13 @@ class Tower():
 
 
     def reset(self):
+        self.intensity = 0
         self.hues = [(0.5 + 0.075 * i) % 1 for i in range(self.n_stages + 1)]
         self.progress = 0
         self.rotation = 0
 
-        self.last_update = time()
 
-
-    def event(self):
+    def event(self, num):
         self.blend_mode = 1 - self.blend_mode
 
 
@@ -97,26 +96,20 @@ class Tower():
             screen.fill([240]*3, special_flags=pygame.BLEND_MULT)
 
 
-    def update(self, bpm, last_beat, delta_t):
-        # Progress transformations
-        self.progress = np.minimum(1, ((time() - last_beat) % (60/bpm)) * bpm / 60)
-        self.rotation += 0.0008 * bpm
-        for i in range(len(self.hues)):
-            self.hues[i] += 0.0001 * bpm
-
-        # Limit FPS to BPM for everything below
-        if time() - last_beat < 60/bpm:
-            self.last_update = last_beat
-            return
-        if time() - self.last_update < 60/bpm:
-            return
-        self.last_update += 60/bpm
-
+    def beat(self, t):
         # Add new hue when new iteration spawns
         self.hues = [(self.hues[0] - 0.075) % 1,] + self.hues[:-1]
 
 
-    def draw(self, screen, bpm, last_beat, brightness):
+    def update(self, t, beat_progress, measure_progress, bpm):
+        # Progress transformations
+        self.progress = beat_progress
+        self.rotation += 0.0008 * bpm
+        for i in range(len(self.hues)):
+            self.hues[i] += 0.0001 * bpm
+
+
+    def draw(self, screen, brightness, t, beat_progress, measure_progress):
         tower = spiral_out(self.tower, self.center, self.f, self.progress)
 
         tip = (1 - hermite(self.progress)) * self.tip + hermite(self.progress) * spiral_in(self.tower_with_tip, self.center, self.f)
