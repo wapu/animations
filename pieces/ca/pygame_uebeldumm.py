@@ -60,7 +60,8 @@ class UebelDumm():
 
 
     def event(self, num):
-        self.bg_lightup = 1
+        if num == 1:
+            self.bg_lightup = 1
 
 
     def clear_frame(self, screen):
@@ -71,42 +72,73 @@ class UebelDumm():
         self.locations[:,0] -= 5
         self.bg_res = (self.bg_res - 1) % 4
 
+        if self.intensity == 3:
+            self.bg_lightup += 0.3
+
 
     def update(self, t, beat_progress, measure_progress, bpm):
         self.locations[:,1:] = self.locations[:,:-1]
         self.locations[:,0] += self.speeds
         self.dash_offset = (self.dash_offset - 0.2) % (len(self.points)/self.n_dashes)
-        self.bg_lightup *= 0.9
+        self.bg_lightup *= 0.75
 
 
     def draw(self, screen, brightness, t, beat_progress, measure_progress):
-        progress = beat_progress
         progress_2 = (2 * measure_progress) % 1
 
-        bg = scale_around(self.bg, 0.98 + 0.01 * progress, self.center)
-        points = self.points + 10*np.array([-np.cos(2*np.pi * progress_2), -np.abs(np.sin(2*np.pi * progress_2))])
-        points = scale_around(points, 1 - 0.02 * progress, self.center)
+        # Background tsp path
+        bg = self.bg
+        bg = scale_around(self.bg, 0.97 + 0.02 * beat_progress, self.center)
+
+        # Bounce and jump
+        points = self.points
+        if self.intensity >= 1:
+            points = points + 10*np.array([-np.cos(2*np.pi * progress_2), -np.abs(np.sin(2*np.pi * progress_2))])
+            points = scale_around(points, 1 - 0.04 * beat_progress, self.center)
+        else:
+            points = scale_around(points, 1 - 0.02 * beat_progress, self.center)
+
+        # Locations for jumpy dots and their trail
         dots = [de_boor_np(self.locations[:,i] % len(points), points) for i in range(self.trail)]
 
-        pygame.draw.lines(screen, hls_to_rgb(1, (0.02 + self.bg_lightup) * brightness, 0), True, bg[::self.bg_res + 1], width=3)
+        # Coordinates of dashes for main tsp path
+        d1 = de_boor_np(np.linspace(0, len(points), self.n_dashes, endpoint=False) + self.dash_offset, points)
+        d2 = de_boor_np(np.linspace(0, len(points), self.n_dashes, endpoint=False) + self.dash_offset + 1, points)
 
-        for d in range(self.n_dots):
-            hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*(self.locations[d,0]%len(points)) / len(points) + 0.5*t))) % 1
-            for i in range(1, self.trail):
-                p1 = dots[i-1][d]
-                p2 = dots[i][d]
-                pygame.draw.line(screen, hls_to_rgb(hue, 0.5 * brightness * 0.75**i), p1, p2, width=4)
+        screen.lock()
 
-        p1 = de_boor_np(np.linspace(0, len(points), self.n_dashes, endpoint=False) + self.dash_offset, points)
-        p2 = de_boor_np(np.linspace(0, len(points), self.n_dashes, endpoint=False) + self.dash_offset + 1, points)
-        for i in range(len(p1)):
+        # Draw background
+        if self.intensity <= 2:
+            pygame.draw.lines(screen, hls_to_rgb(1, (0.03 + self.bg_lightup) * brightness, 0), True, bg, width=3)
+        else:
+            pygame.draw.lines(screen, hls_to_rgb(1, (0.03 + self.bg_lightup) * brightness, 0), True, bg[::self.bg_res + 1], width=3)
+
+        # Draw dot trails
+        if self.intensity >= 2:
+            for d in range(self.n_dots):
+                hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*(self.locations[d,0]%len(points)) / len(points) + 0.5*t))) % 1
+                for i in range(1, self.trail):
+                    p1 = dots[i-1][d]
+                    p2 = dots[i][d]
+                    pygame.draw.line(screen, hls_to_rgb(hue, 0.5 * brightness * 0.75**i), p1, p2, width=4)
+
+        # Draw dashed main tsp path
+        for i in range(len(d1)):
             hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*((i + self.dash_offset)/1000) + 0.5*t))) % 1
-            pygame.draw.aaline(screen, hls_to_rgb(hue, 0.3 * brightness), p1[i], p2[i])
+            if self.intensity == 3:
+                l = 0.4 + 0.2 * np.sin(2*np.pi * beat_progress)
+            else:
+                l = 0.3
+            pygame.draw.aaline(screen, hls_to_rgb(hue, l * brightness), d1[i], d2[i])
 
-        for d in range(self.n_dots):
-            hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*(self.locations[d,0]%len(points)) / len(points) + 0.5*t))) % 1
-            pygame.draw.circle(screen, hls_to_rgb(hue, 0.5 * brightness), dots[0][d], radius=4)
-            pygame.draw.circle(screen, (0,0,0), dots[0][d], radius=3)
+        # Draw dots
+        if self.intensity >= 2:
+            for d in range(self.n_dots):
+                hue = (0.1*t + 0.2 * np.sin(2*np.pi*(self.n_waves*(self.locations[d,0]%len(points)) / len(points) + 0.5*t))) % 1
+                pygame.draw.circle(screen, hls_to_rgb(hue, 0.5 * brightness), dots[0][d], radius=4)
+                pygame.draw.circle(screen, (0,0,0), dots[0][d], radius=3)
+
+        screen.unlock()
 
 
 if __name__ == '__main__':

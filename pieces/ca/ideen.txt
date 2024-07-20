@@ -1,6 +1,5 @@
 all animations:
     have 2 different "one time" effects
-    have 2 (better 4) different (escalating) modes
 
 
 draufsicht mit altbau, punktbau und L-bau
@@ -14,20 +13,16 @@ turm-kontur
     als schneeflocke (osculating circles?)
     kaleidoskop
 schriftzug
-    stippling-sequenz der buchstaben
     CLLGM CDMCM - OEIU AAEIU
     alle Worte die mit CA anfangen (oder KA oderr ZA oder CHA)
 fräse-fahrt für neubauschrank
+frontansicht schrank (tür + schubladen mit grifflöchern)
 zoom auf maps
 wireframe drehend und mit verzerrungen
 rohrbach wappen
     ror
     wellenlinien
-übel dumm
 d&s kranlogos überall (diringer und scheidel)
-frontansicht schrank (tür + schubladen mit grifflöchern)
-matrix-glyphen (digital rain)
-    DK, Herz, Hammer&Sichel, Anarchie, Vögel, CA, Hanfblatt, Glockenturm, Noten, r o r, grundriss
 
 
 uhren (bpm und echte zeit) als apollinian gasket

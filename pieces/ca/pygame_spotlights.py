@@ -35,7 +35,10 @@ class Spotlights():
         self.size = np.array([width, height])
         self.center = self.size/2
 
-        with open('data/CLLGM CDMCM.pkl', 'rb') as f:
+        # with open('data/CLLGM CDMCM.pkl', 'rb') as f:
+        #     self.cllgm_og = pickle.load(f)
+
+        with open('data/BLOCK.pkl', 'rb') as f:
             self.cllgm_og = pickle.load(f)
 
         self.n_lights = 3
@@ -90,11 +93,12 @@ class Spotlights():
 
 
     def event(self, num):
-        self.mode = 1 - self.mode
+        # self.mode = 1 - self.mode
+        pass
 
 
     def clear_frame(self, screen):
-        if self.mode == 0:
+        if self.intensity >= 2:
             screen.fill((0,0,0))
         else:
             screen.fill([200]*3, special_flags=pygame.BLEND_MULT)
@@ -113,13 +117,14 @@ class Spotlights():
 
         self.hues = (self.hues + 0.01 * beat_progress) % 1
 
-        if self.mode == 0:
+        if self.intensity >= 2:
             beat_cos = 0.5 - 0.5*np.cos(2*np.pi * (beat_progress + 0.25))
             self.cllgm = [rotate_around(l + np.array([(10*i - 5*(len(self.cllgm_og)-1)) * beat_cos, 0]), self.rotate, self.center) for i, l in enumerate(self.cllgm_og)]
 
 
     def draw(self, screen, brightness, t, beat_progress, measure_progress):
         beat_spike = np.exp(-((beat_progress - np.round(beat_progress))*20)**2)
+        beat_wave = 0.5 - 0.5*np.sin(2*np.pi * beat_progress + np.pi/4)
 
         for i in range(self.n_lights):
             surf = self.surfaces[i]
@@ -149,13 +154,15 @@ class Spotlights():
             #     cone = self.pos_t[i] + rotate_around(cone, target_angle, np.zeros(2))
             #     pygame.draw.aalines(surf, hls_to_rgb(self.hues[i], 0.01 * brightness), True, cone)
             area_factor = (np.pi * a * b)/self.min_area
-            if self.mode == 0:
+            if self.intensity == 3:
+                pygame.draw.polygon(surf, hls_to_rgb(self.hues[i], 0.05 * (1/area_factor) * brightness) * (2 * beat_wave), ellipse)
+            elif self.intensity == 2:
                 pygame.draw.polygon(surf, hls_to_rgb(self.hues[i], 0.05 * (1/area_factor) * brightness), ellipse)
-            if self.mode == 1:
+            else:
                 pygame.draw.polygon(surf, hls_to_rgb(self.hues[i], 0.02 * (1/area_factor) * brightness), ellipse)
 
             # Draw colored outline of letters
-            if self.mode == 0:
+            if self.intensity >= 2:
                 intersections = []
                 for letter in self.cllgm:
                     poly = geo.Polygon(ellipse)
@@ -167,7 +174,10 @@ class Spotlights():
                         elif isinstance(intersection, geo.MultiLineString):
                             intersections.extend([np.asarray(line.coords) for line in intersection.geoms])
                 for intersection in intersections:
-                    pygame.draw.lines(surf, hls_to_rgb(self.hues[i], 0.5 * brightness), False, intersection, width=3)
+                    if self.intensity == 3:
+                        pygame.draw.lines(surf, hls_to_rgb(self.hues[i], 0.5 * brightness * beat_wave), False, intersection, width=4)
+                    else:
+                        pygame.draw.lines(surf, hls_to_rgb(self.hues[i], 0.5 * brightness), False, intersection, width=4)
 
             # Draw shadows
             for letter in self.cllgm:
@@ -200,7 +210,10 @@ class Spotlights():
             surf.unlock()
 
             # Add light contribution to canvas
-            screen.blit(surf, (0, 10*beat_spike - 5 if (self.mode == 0) else 0), special_flags=pygame.BLEND_ADD)
+            if self.intensity >= 1:
+                screen.blit(surf, (0, 30 * beat_spike - 5), special_flags=pygame.BLEND_ADD)
+            else:
+                screen.blit(surf, (0, 0), special_flags=pygame.BLEND_ADD)
 
         # # Display light sources
         # for i in range(self.n_lights):

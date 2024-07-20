@@ -43,6 +43,7 @@ class Swarm():
         self.WH = np.array([width, height])
 
         # Set up guides
+        prepare_guide('LO.png')
         prepare_guide('smiley.png')
         prepare_guide('heart.png')
         prepare_guide('weed.png')
@@ -55,8 +56,11 @@ class Swarm():
         self.guides = []
         for file in glob('data/swarm_*.npy'):
             self.guides.append(np.load(file))
+            # print(file)
         if len(self.guides) == 0:
             self.guides.append(np.zeros((width, height, 2)))
+        self.i_guide = 1
+        self.guide = self.guides[self.i_guide]
 
         # Constants
         self.n = 200
@@ -76,15 +80,21 @@ class Swarm():
 
     def reset(self):
         self.intensity = 0
-        self.guide = self.guides[np.random.randint(len(self.guides))]
 
 
     def event(self, num):
-        to_center = self.WH/2 - self.coords
-        to_center = to_center / np.linalg.norm(to_center)
-        self.vs = -50 * to_center
-        self.momentum_tmp = 1 - self.momentum
-        self.v_max_tmp = 20
+        match num:
+            case 1:
+                indices = list(range(len(self.guides)))
+                indices.remove(self.i_guide)
+                self.i_guide = np.random.choice(indices)
+                self.guide = self.guides[self.i_guide]
+            case 2:
+                to_center = self.WH/2 - self.coords
+                to_center = to_center / np.linalg.norm(to_center)
+                self.vs = -50 * to_center
+                self.momentum_tmp = 1 - self.momentum
+                self.v_max_tmp = 20
 
 
     def clear_frame(self, screen):
@@ -92,7 +102,10 @@ class Swarm():
 
 
     def beat(self, t):
-        pass
+        if self.intensity >= 2:
+            offset = np.random.randn(*self.coords.shape)
+            offset /= np.linalg.norm(offset, axis=-1, keepdims=True)
+            self.coords = np.mod(self.coords + 5*offset, self.WH)
 
 
     def update(self, t, beat_progress, measure_progress, bpm):
@@ -135,11 +148,17 @@ class Swarm():
                 # if self.D[i,j] < self.dist/2:
                 if self.D[i,j] < 2*self.dist:
                     h = (D_rbf[i,j] + hue_shift) % 1
-                    l = 0.6 * D_rbf[i,j] + 0.01 * beat_cos
+                    if self.intensity == 3:
+                        l = 0.5 * D_rbf[i,j] + 0.5 * (1 - beat_progress)**2
+                    else:
+                        l = 0.6 * D_rbf[i,j] + 0.01 * beat_cos
                     pygame.draw.aaline(screen, hls_to_rgb(h,l*brightness,1.0), self.coords[i], self.coords[j])
 
         # Points
-        color = [255*beat_cos*brightness]*3
-        for c in self.coords:
-            # pygame.draw.circle(screen, color, c, radius=2)
-            pygame.draw.circle(screen, color, c, radius=1)
+        if self.intensity < 3:
+            if self.intensity >= 1:
+                color = [255*beat_cos*brightness]*3
+            else:
+                color = [128*brightness]*3
+            for c in self.coords:
+                pygame.draw.circle(screen, color, c, radius=1)

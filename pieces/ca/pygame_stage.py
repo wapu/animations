@@ -16,7 +16,8 @@ from pygame_faltr import Faltr
 from pygame_matrix import Matrix
 from pygame_uebeldumm import UebelDumm
 from pygame_spotlights import Spotlights
-from pygame_explosion import Explosion
+# from pygame_explosion import Explosion
+from pygame_lo import LO
 
 
 # Constants
@@ -42,7 +43,7 @@ for k in keys.keys():
 
 
 # Initialize animations
-animations = [anim(WIDTH, HEIGHT - 30) for anim in [Swarm, Maze, Bird_1, Bird_2, Tower, Faltr, Matrix, UebelDumm, Spotlights, Explosion]]
+animations = [anim(WIDTH, HEIGHT - 30) for anim in [Swarm, Maze, Bird_1, Bird_2, Tower, Faltr, Matrix, UebelDumm, Spotlights, LO]]
 current = len(animations) - 1
 
 
@@ -51,7 +52,7 @@ done = False
 pause = False
 status_bar = True
 help = False
-bpm = 90#130
+bpm = 160
 t_prev = time()
 internal_time = 0
 last_beat = 0
@@ -72,7 +73,10 @@ for function, hotkey in keys.items():
     if len(function) > 1:
         text_width = font.size(f'{function}:')[0]
         help_bg.blit(font.render(f'{function}:', True, [255]*3), (400 - text_width - 15, 80 + 28 * i))
-        help_bg.blit(font.render(pygame.key.name(hotkey), True, [255]*3), (415, 80 + 28 * i))
+        name = pygame.key.name(hotkey)
+        if name[0] == '[':
+            name = f'numpad {name[1]}'
+        help_bg.blit(font.render(name, True, [255]*3), (415, 80 + 28 * i))
         i += 1
 help_bg.blit(font.render('to set a specific BPM value, type it out like 1 - 2 - 8', True, [255]*3), (60, 750))
 
@@ -92,13 +96,16 @@ while not done:
                 if 48 <= int(typed) <= 300:
                     bpm = float(typed)
                     typed = ''
-            # Special effects 0 - 9
+            # Special effects 0 - 9.fill((0,0,0))
             elif e.key in [pygame.K_KP0, pygame.K_KP1, pygame.K_KP2, pygame.K_KP3, pygame.K_KP4, pygame.K_KP5, pygame.K_KP6, pygame.K_KP7, pygame.K_KP8, pygame.K_KP9]:
-                animations[current].event(int(e.unicode))
+                animations[current].event(int(pygame.key.name(e.key)[1:2]))
             # Quit
             elif e.key == keys['exit']:
-                done = True
-                break
+                if help == True:
+                    help = False
+                else:
+                    done = True
+                    break
             # Get BPM from key presses
             elif e.key == keys['synch beat']:
                 beats.append(internal_time)
@@ -152,11 +159,13 @@ while not done:
             # Next animation
             elif e.key == keys['next animation']:
                 current = (current + 1) % len(animations)
+                screen.fill((0,0,0))
                 # last_beat = internal_time
                 animations[current].reset()
             # Previous animation
             elif e.key == keys['previous animation']:
                 current = (current - 1) % len(animations)
+                screen.fill((0,0,0))
                 # last_beat = internal_time
                 animations[current].reset()
             # Increase brightness
@@ -213,9 +222,9 @@ while not done:
 
         sep = ' | '
         text = f'bpm {bpm:5.1f} {sep} fps {fps:5.1f} {sep} '
-        text += f'animation {current+1:2d}/{len(animations):d} {sep} intensity {"".join(intensity)} {sep} '
+        text += f'anim {current+1:2d}/{len(animations):d} {sep} lvl {"".join(intensity)} {sep} '
         text += f'time {internal_time_str} {sep} '
-        text += f'brightness {100*brightness:3.0f} {sep} screen use {100*light:4.1f}% {sep} '
+        text += f'brightness {100*brightness:3.0f} {sep} screen {100*light:4.1f}% {sep} '
         text += f'[h] for help'
 
         pygame.draw.rect(screen, (0,0,0), pygame.Rect(0, HEIGHT - 30, WIDTH, 30))

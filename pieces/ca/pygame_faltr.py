@@ -65,19 +65,20 @@ class Faltr():
 
 
     def event(self, num):
-        if self.mode == 0:
-            self.switch_time = time()
-            self.mode = 1
-        elif self.mode == 1:
-            self.sway_lag += time() - self.switch_time
-            self.mode = 0
+        # if self.mode == 0:
+        #     self.switch_time = time()
+        #     self.mode = 1
+        # elif self.mode == 1:
+        #     self.sway_lag += time() - self.switch_time
+        #     self.mode = 0
+        pass
 
 
     def clear_frame(self, screen):
-        if self.mode == 0:
-            screen.fill([200]*3, special_flags=pygame.BLEND_MULT)
-        if self.mode == 1:
+        if self.intensity <= 2:
             screen.fill([0]*3)
+        elif self.intensity == 3:
+            screen.fill([200]*3, special_flags=pygame.BLEND_MULT)
 
 
     def beat(self, t):
@@ -94,10 +95,17 @@ class Faltr():
         self.hues += 0.005
 
         # Tilt and sway for "drunk" effect
-        if self.mode == 0:
-            time = t - self.sway_lag
-            self.tilt = get_rotation_matrix(0.05 * np.cos(2*np.pi * time/8 - np.pi/2))
-            self.sway = np.array([200 * np.cos(2*np.pi * time/8), 50 * np.sin(2*np.pi * time/4)])
+        if self.intensity >= 2:
+            if self.mode == 0:
+                self.sway_lag += time() - self.switch_time
+                self.mode = 1
+            sway_time = t - self.sway_lag
+            self.tilt = get_rotation_matrix(0.05 * np.cos(2*np.pi * sway_time/8 - np.pi/2))
+            self.sway = np.array([200 * np.cos(2*np.pi * sway_time/8), 50 * np.sin(2*np.pi * sway_time/4)])
+        else:
+            if self.mode == 1:
+                self.switch_time = time()
+                self.mode = 0
 
         # Crawlers that went out on the right get reset to the left
         for i in range(len(self.offsets)):
@@ -128,9 +136,9 @@ class Faltr():
                 # Mirror x coordinates for odd rows
                 if (i//self.n_x)%2 == 1:
                     poly[:,0] = self.width - poly[:,0]
-                if i in self.highlights:
+                if i in self.highlights and self.intensity >= 1:
                     fill = hls_to_rgb(self.hues[i] + hue_shift, 0.01, 1)
-                    border = hls_to_rgb(self.hues[i] + hue_shift, 0.8, 1)
+                    border = hls_to_rgb(self.hues[i] + hue_shift, 0.9, 1)
                 else:
                     fill = np.zeros(3)
                     border = hls_to_rgb(self.hues[i] + hue_shift, 0.3, 0.8)

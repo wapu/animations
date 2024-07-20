@@ -9,19 +9,20 @@ from colors import *
 
 
 
-def spike_pattern(n_y, size):
-    i = np.random.randint(5)
+def spike_pattern(n_y, size, i=None):
+    if i is None:
+        i = np.random.randint(5)
     match i:
         case 0:
             spike = np.sin(np.arange(n_y)) * size
         case 1:
             spike = np.cos(np.arange(n_y)/2) * size
         case 2:
-            spike = (np.arange(n_y)**3)/(n_y**2)
+            spike = (np.arange(n_y)**3)/(n_y**2) * size/4
         case 3:
-            spike = (np.random.rand(n_y) - 1) * size/2
+            spike = (np.random.rand(n_y) - 1) * size
         case 4:
-            spike = np.ones(n_y) * size/4
+            spike = np.ones(n_y) * size/2
     sign = 2*np.random.randint(2) - 1
     return spike * sign
 
@@ -34,13 +35,13 @@ class Matrix():
         self.h = height
 
         self.font_size = 20
-        # self.fonts = ['Dyuthi', 'Chilanka', 'Sakurata', 'Sakurata', 'Sakurata', 'Sakurata', 'Sakurata']
         self.fonts = ['Sakurata', 'Chilanka']
         self.drops_per_beat = 4
 
         self.sequence = 'RAMBACAMBA '
-        self.n_x = (self.w + 2*self.font_size)//(self.font_size+5)
-        self.n_y = (self.h + self.font_size)//(self.font_size+5)
+        self.sequence = 'BLOCK PARTY '
+        self.n_x = (self.w + 2*self.font_size) // (self.font_size+5)
+        self.n_y = (self.h + self.font_size) // (self.font_size+5) + 1
 
         self.reset()
 
@@ -57,16 +58,20 @@ class Matrix():
         self.rotation = np.random.randint(3, size=(self.n_x, self.n_y)) - 1
         self.hue = np.zeros((self.n_x, self.n_y))
         self.hue_offset = 0.05 * np.random.rand(self.n_x, self.n_y)
-        self.age = np.zeros((self.n_x, self.n_y))
+        self.age = np.zeros((self.n_x, self.n_y)) - 60
 
         self.drops = []
         self.glitches = [(np.random.randint(self.n_x), np.random.randint(self.n_y)) for i in range(100)]
         self.spike = np.zeros(self.n_y)
+        self.spike_event = np.zeros(self.n_y)
 
 
     def event(self, num):
-        self.i_font = 1 - self.i_font
-        self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_size)
+        if num == 0:
+            self.i_font = 1 - self.i_font
+            self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_size)
+        if 1 <= num <= 5:
+            self.spike_event = spike_pattern(self.n_y, self.font_size * 3, num-1)
 
 
     def clear_frame(self, screen):
@@ -113,6 +118,9 @@ class Matrix():
         # Remove drops that leave the screen
         self.drops = [drop for drop in self.drops if int(drop[1]) < self.n_y]
 
+        # Fade away user event
+        self.spike_event *= 0.9
+
 
     def draw(self, screen, brightness, t, beat_progress, measure_progress):
         beat_cos = 0.5 - 0.5*np.cos(2*np.pi * beat_progress)
@@ -121,15 +129,24 @@ class Matrix():
         for x in range(self.n_x):
             for y in range(self.n_y):
                 letter = self.sequence[self.letters[x,y]]
-                if time() - self.age[x,y] < 0.05:
-                    lightness = 0.5 + 0.5 * beat_cos
+                if t - self.age[x,y] < 0.05:
+                    lightness = 0.25 + 0.75 * beat_cos
                 else:
-                    lightness = 0.5 * np.exp(-(t - self.age[x,y])**2 / 3) * (0.8 + 0.2 * beat_cos)
+                    if self.intensity < 3:
+                        lightness = 0.5 * np.exp(-(t - self.age[x,y])**2 / 3) * (0.8 + 0.2 * beat_cos)
+                    else:
+                        lightness = 0.7 * np.exp(-(t - self.age[x,y])**2 / (3 + 5*beat_cos)) * (0.4 + 0.6 * beat_cos)
                 color = hls_to_rgb(self.hue[x,y], lightness * brightness, .7)
                 l = self.font.render(letter, True, color)
                 l = pygame.transform.flip(l, self.flipped[x,y] == 1, False)
                 l = pygame.transform.rotate(l, 90 * self.rotation[x,y])
                 w, h = l.get_size()
-                x_ = (self.font_size+5)*x - w/2 + beat_spike * self.spike[y]
+                x_ = (self.font_size+5)*x - w/2
+                if self.intensity >= 1:
+                    x_ += beat_spike * self.spike[y]
+                x_ += self.spike_event[y]
                 y_ = (self.font_size+5)*y - h/2
+                if self.intensity >= 2:
+                    y_ -= self.font_size * beat_cos
+                    y_ -= 20 * beat_spike
                 screen.blit(l, (x_, y_))

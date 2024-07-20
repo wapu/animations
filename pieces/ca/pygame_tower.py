@@ -73,8 +73,6 @@ class Tower():
         self.tower_with_tip = scale_around(self.tower_with_tip, init_scale, self.center)
         self.tip = scale_around(self.tip, init_scale, self.center)
 
-        self.blend_mode = 0
-
         self.reset()
 
 
@@ -86,13 +84,15 @@ class Tower():
 
 
     def event(self, num):
-        self.blend_mode = 1 - self.blend_mode
+        pass
 
 
     def clear_frame(self, screen):
-        if self.blend_mode == 0:
+        if self.intensity <= 1:
+            screen.fill((0,0,0))
+        elif self.intensity == 2:
             screen.fill([150]*3, special_flags=pygame.BLEND_MULT)
-        else:
+        elif self.intensity == 3:
             screen.fill([240]*3, special_flags=pygame.BLEND_MULT)
 
 
@@ -103,10 +103,18 @@ class Tower():
 
     def update(self, t, beat_progress, measure_progress, bpm):
         # Progress transformations
-        self.progress = beat_progress
-        self.rotation += 0.0008 * bpm
+        if self.intensity == 0:
+            self.progress = measure_progress
+            self.rotation += 0.0002 * bpm
+        else:
+            self.progress = beat_progress
+            self.rotation += 0.0008 * bpm
+
         for i in range(len(self.hues)):
-            self.hues[i] += 0.0001 * bpm
+            if self.intensity == 0:
+                self.hues[i] += 0.0001 * bpm
+            else:
+                self.hues[i] += 0.0001 * bpm
 
 
     def draw(self, screen, brightness, t, beat_progress, measure_progress):
@@ -115,14 +123,32 @@ class Tower():
         tip = (1 - hermite(self.progress)) * self.tip + hermite(self.progress) * spiral_in(self.tower_with_tip, self.center, self.f)
         tip = spiral_out(tip, self.center, self.f, self.progress)
 
-        pygame.draw.aalines(screen, hls_to_rgb(self.hues[0], 0.3*brightness), False, rotate_around(tip, self.rotation, self.center))
-        pygame.draw.aalines(screen, hls_to_rgb(self.hues[0], 0.3*brightness), False, rotate_around(tip, self.rotation + np.pi*2/3, self.center))
-        pygame.draw.aalines(screen, hls_to_rgb(self.hues[0], 0.3*brightness), False, rotate_around(tip, self.rotation + np.pi*4/3, self.center))
+        beat_cos = 0.5 - 0.5 * np.sin(2*np.pi * beat_progress)
+        if self.intensity == 0:
+            tower = scale_around(tower, 1 + 0.2 * beat_cos, self.center)
+            tip = scale_around(tip, 1 + 0.2 * beat_cos, self.center)
+            tower = rotate_around(tower, 2*np.pi * beat_cos * 0.005, self.center)
+            tip = rotate_around(tip, 2*np.pi * beat_cos * 0.005, self.center)
+            l = 0.5 - 0.4 * beat_cos
+        elif self.intensity == 1:
+            tower = scale_around(tower, 1 + 0.3 * beat_cos, self.center)
+            tip = scale_around(tip, 1 + 0.3 * beat_cos, self.center)
+            l = 0.35
+        elif self.intensity == 2:
+            tower = scale_around(tower, 1 + 0.1 * beat_cos, self.center)
+            tip = scale_around(tip, 1 + 0.1 * beat_cos, self.center)
+            l = 0.3
+        elif self.intensity == 3:
+            l = 0.25
+
+        pygame.draw.aalines(screen, hls_to_rgb(self.hues[0], l*brightness), False, rotate_around(tip, self.rotation, self.center))
+        pygame.draw.aalines(screen, hls_to_rgb(self.hues[0], l*brightness), False, rotate_around(tip, self.rotation + np.pi*2/3, self.center))
+        pygame.draw.aalines(screen, hls_to_rgb(self.hues[0], l*brightness), False, rotate_around(tip, self.rotation + np.pi*4/3, self.center))
 
         for i in range(self.n_stages):
-            pygame.draw.lines(screen, hls_to_rgb(self.hues[i+1], 0.3*brightness), False, rotate_around(tower, self.rotation, self.center), width=i+1)
-            pygame.draw.lines(screen, hls_to_rgb(self.hues[i+1], 0.3*brightness), False, rotate_around(tower, self.rotation + np.pi*2/3, self.center), width=i+1)
-            pygame.draw.lines(screen, hls_to_rgb(self.hues[i+1], 0.3*brightness), False, rotate_around(tower, self.rotation + np.pi*4/3, self.center), width=i+1)
+            pygame.draw.lines(screen, hls_to_rgb(self.hues[i+1], l*brightness), False, rotate_around(tower, self.rotation, self.center), width=i+1)
+            pygame.draw.lines(screen, hls_to_rgb(self.hues[i+1], l*brightness), False, rotate_around(tower, self.rotation + np.pi*2/3, self.center), width=i+1)
+            pygame.draw.lines(screen, hls_to_rgb(self.hues[i+1], l*brightness), False, rotate_around(tower, self.rotation + np.pi*4/3, self.center), width=i+1)
 
             tower = spiral_out(tower, self.center, self.f, progress=1)
             tip = spiral_out(tip, self.center, self.f, progress=1)
