@@ -3,7 +3,6 @@ with contextlib.redirect_stdout(None):
     import pygame.draw
 import numpy as np
 
-from time import time
 from scipy.spatial import Delaunay
 from shapely import geometry as geo
 
@@ -51,7 +50,6 @@ class Explosion():
         self.rat_offset = np.concatenate(self.rat, axis=0).mean(axis=0)
         self.rat = [poly - self.rat_offset for poly in self.rat]
 
-        self.last_update = time()
         self.reset()
 
 
@@ -144,6 +142,10 @@ class Explosion():
         self.angles = np.array(angles)
         self.angular_vs = np.array(angular_vs)
         self.stage += 1
+
+
+    def measure(self, t):
+        pass
 
 
     def update(self, t, beat_progress, measure_progress, bpm):

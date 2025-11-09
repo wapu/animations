@@ -101,6 +101,10 @@ class Tower():
         self.hues = [(self.hues[0] - 0.075) % 1,] + self.hues[:-1]
 
 
+    def measure(self, t):
+        pass
+
+
     def update(self, t, beat_progress, measure_progress, bpm):
         # Progress transformations
         if self.intensity == 0:

@@ -17,7 +17,16 @@ from pygame_matrix import Matrix
 from pygame_uebeldumm import UebelDumm
 from pygame_spotlights import Spotlights
 # from pygame_explosion import Explosion
-from pygame_lo import LO
+# from pygame_lo import LO
+from pygame_lines import Lines
+from pygame_welde import Welde
+from pygame_zweizwei import ZweiZwei
+from pygame_fireworks import Fireworks
+from pygame_snowflakes import Snowflakes
+from metaballs import Metaballs
+from weave import Weave
+from fourier_curves import FourierCurves
+from test import Test
 
 
 # Constants
@@ -43,7 +52,8 @@ for k in keys.keys():
 
 
 # Initialize animations
-animations = [anim(WIDTH, HEIGHT - 30) for anim in [Swarm, Maze, Bird_1, Bird_2, Tower, Faltr, Matrix, UebelDumm, Spotlights, LO]]
+animations = [anim(WIDTH, HEIGHT - 30) for anim in [Swarm, Maze, Bird_1, Bird_2, Tower, Faltr, Matrix, UebelDumm, Spotlights, Lines, Welde, ZweiZwei, Fireworks, Snowflakes, Metaballs, Weave, FourierCurves, Test]]
+animations = [anim(WIDTH, HEIGHT - 30) for anim in [Swarm, Maze, Bird_1, Bird_2, Tower, Matrix, UebelDumm, Spotlights, Lines, Welde, Metaballs, FourierCurves, Test]]
 current = len(animations) - 1
 
 
@@ -56,6 +66,7 @@ bpm = 160
 t_prev = time()
 internal_time = 0
 last_beat = 0
+last_measure = 0
 beats = []
 brightness = 1.0
 typed = ''
@@ -113,6 +124,7 @@ while not done:
                     if beats[-1] - beats[-2] > 1.5:
                         beats = beats[-1:]
                 last_beat = beats[0]
+                last_measure = beats[0]
                 if len(beats) >= 8:
                     s_per_beat = (beats[-1] - beats[0]) / (len(beats) - 1)
                     bpm = np.round(60/s_per_beat,1)
@@ -122,12 +134,13 @@ while not done:
             # Toggle status bar
             elif e.key == keys['toggle info']:
                 status_bar = not status_bar
-            # Toggle status bar
+            # Toggle help screen
             elif e.key == keys['toggle help']:
                 help = not help
             # Reset current animation
             elif e.key == keys['reset animation']:
                 animations[current].reset()
+                # last_beat = internal_time
             # Increase intensity of current animation
             elif e.key == keys['increase intensity']:
                 animations[current].intensity = (animations[current].intensity + 1) % 4
@@ -145,6 +158,7 @@ while not done:
                 else:
                     bpm += 1
                 last_beat = internal_time
+                last_measure = internal_time
             # BPM decrease
             elif e.key == keys['decrease bpm']:
                 if e.mod & pygame.KMOD_SHIFT:
@@ -156,6 +170,7 @@ while not done:
                 else:
                     bpm -= 1
                 last_beat = internal_time
+                last_measure = internal_time
             # Next animation
             elif e.key == keys['next animation']:
                 current = (current + 1) % len(animations)
@@ -190,13 +205,20 @@ while not done:
         internal_time += t_diff
         beat_interval = 60/bpm
         beat_progress = ((internal_time - last_beat) % beat_interval) / beat_interval
-        measure_progress = ((internal_time/4 - last_beat) % beat_interval) / beat_interval
+        measure_interval = 4*beat_interval
+        measure_progress = ((internal_time - last_measure) % measure_interval) / measure_interval
 
         # Trigger beat event
         if internal_time - last_beat > beat_interval:
             while internal_time - last_beat > beat_interval:
                 last_beat += beat_interval
             animations[current].beat(internal_time)
+
+        # Trigger measure event
+        if internal_time - last_measure > measure_interval:
+            while internal_time - last_measure > measure_interval:
+                last_measure += measure_interval
+            animations[current].measure(internal_time)
 
         # Update animation
         animations[current].update(internal_time, beat_progress, measure_progress, bpm)
@@ -225,6 +247,7 @@ while not done:
         text += f'anim {current+1:2d}/{len(animations):d} {sep} lvl {"".join(intensity)} {sep} '
         text += f'time {internal_time_str} {sep} '
         text += f'brightness {100*brightness:3.0f} {sep} screen {100*light:4.1f}% {sep} '
+        text += f'{animations[current].__class__.__name__[:15]} {sep} '
         text += f'[h] for help'
 
         pygame.draw.rect(screen, (0,0,0), pygame.Rect(0, HEIGHT - 30, WIDTH, 30))

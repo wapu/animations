@@ -91,6 +91,10 @@ class Faltr():
         self.groups = 1 - self.groups
 
 
+    def measure(self, t):
+        pass
+
+
     def update(self, t, beat_progress, measure_progress, bpm):
         self.hues += 0.005
 

@@ -44,10 +44,10 @@ class Maze():
         self.slant_right = self.slant_right.reshape(-1, order='F')
 
         # Mark forbidden areas
-        # ca = iio.imread('data/CA_188x104.png')
-        # self.forbidden = (ca[:,:,0] > 0).flatten()
-        lo = iio.imread('data/LO_188x104.png')
-        self.forbidden = (lo[:,:,0] > 0).flatten()
+        ca = iio.imread('data/CA_188x104.png')
+        self.forbidden = (ca[:,:,0] > 0).flatten()
+        # lo = iio.imread('data/LO_188x104.png')
+        # self.forbidden = (lo[:,:,0] > 0).flatten()
 
         # Set up diagonal neighborhood graph
         self.neighbors = [[] for i in range(self.n_egdes)]
@@ -127,6 +127,10 @@ class Maze():
                     else:
                         self.hues[n] = np.nan
         self.frontier = self.new_frontier
+
+
+    def measure(self, t):
+        pass
 
 
     def update(self, t, beat_progress, measure_progress, bpm):

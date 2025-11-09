@@ -82,6 +82,10 @@ class LO():
         self.Ls = [[L, v, c, r, av] for [L, v, c, r, av] in self.Ls if c.sum() > 1]
 
 
+    def measure(self, t):
+        pass
+
+
     def update(self, t, beat_progress, measure_progress, bpm):
         self.color = measure_progress
         self.rotation += self.rotation_dir * self.angular_v

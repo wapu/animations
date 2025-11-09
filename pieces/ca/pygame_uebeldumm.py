@@ -76,6 +76,10 @@ class UebelDumm():
             self.bg_lightup += 0.3
 
 
+    def measure(self, t):
+        pass
+
+
     def update(self, t, beat_progress, measure_progress, bpm):
         self.locations[:,1:] = self.locations[:,:-1]
         self.locations[:,0] += self.speeds

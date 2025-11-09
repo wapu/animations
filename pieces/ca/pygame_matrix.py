@@ -34,14 +34,15 @@ class Matrix():
         self.w = width
         self.h = height
 
-        self.font_size = 20
-        self.fonts = ['Sakurata', 'Chilanka']
+        self.line_height = 20
+        self.fonts = ['Sakurata', 'Chilanka'] #'Gulfs Display'
+        self.font_sizes = [20, 25] # 27
         self.drops_per_beat = 4
 
-        self.sequence = 'RAMBACAMBA '
-        self.sequence = 'BLOCK PARTY '
-        self.n_x = (self.w + 2*self.font_size) // (self.font_size+5)
-        self.n_y = (self.h + self.font_size) // (self.font_size+5) + 1
+        # self.sequence = 'RAMBACAMBA '
+        self.sequence = 'seid lieb '
+        self.n_x = (self.w + 2*self.line_height) // (self.line_height+5)
+        self.n_y = (self.h + self.line_height) // (self.line_height+5) + 1
 
         self.reset()
 
@@ -49,7 +50,7 @@ class Matrix():
     def reset(self):
         self.intensity = 0
         self.i_font = 0
-        self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_size)
+        self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_sizes[self.i_font])
 
         self.letters = np.arange(self.n_x * self.n_y).reshape(self.n_x, self.n_y) % len(self.sequence)
         for x in range(self.n_x):
@@ -68,10 +69,10 @@ class Matrix():
 
     def event(self, num):
         if num == 0:
-            self.i_font = 1 - self.i_font
-            self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_size)
+            self.i_font = (self.i_font + 1) % len(self.fonts)
+            self.font = pygame.font.SysFont(self.fonts[self.i_font], self.font_sizes[self.i_font])
         if 1 <= num <= 5:
-            self.spike_event = spike_pattern(self.n_y, self.font_size * 3, num-1)
+            self.spike_event = spike_pattern(self.n_y, self.line_height * 3, num-1)
 
 
     def clear_frame(self, screen):
@@ -100,7 +101,11 @@ class Matrix():
             self.glitches[np.random.randint(len(self.glitches))] = (np.random.randint(self.n_x), np.random.randint(self.n_y))
 
         # Change spike type
-        self.spike = spike_pattern(self.n_y, self.font_size)
+        self.spike = spike_pattern(self.n_y, self.line_height)
+
+
+    def measure(self, t):
+        pass
 
 
     def update(self, t, beat_progress, measure_progress, bpm):
@@ -141,12 +146,12 @@ class Matrix():
                 l = pygame.transform.flip(l, self.flipped[x,y] == 1, False)
                 l = pygame.transform.rotate(l, 90 * self.rotation[x,y])
                 w, h = l.get_size()
-                x_ = (self.font_size+5)*x - w/2
+                x_ = (self.line_height+5)*x - w/2
                 if self.intensity >= 1:
                     x_ += beat_spike * self.spike[y]
                 x_ += self.spike_event[y]
-                y_ = (self.font_size+5)*y - h/2
+                y_ = (self.line_height+5)*y - h/2
                 if self.intensity >= 2:
-                    y_ -= self.font_size * beat_cos
+                    y_ -= self.line_height * beat_cos
                     y_ -= 20 * beat_spike
                 screen.blit(l, (x_, y_))

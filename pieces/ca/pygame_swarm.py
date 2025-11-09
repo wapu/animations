@@ -55,11 +55,12 @@ class Swarm():
 
         self.guides = []
         for file in glob('data/swarm_*.npy'):
-            self.guides.append(np.load(file))
-            # print(file)
+            if not 'LO.npy' in file:
+                self.guides.append(np.load(file))
+                # print(file)
         if len(self.guides) == 0:
             self.guides.append(np.zeros((width, height, 2)))
-        self.i_guide = 1
+        self.i_guide = 4
         self.guide = self.guides[self.i_guide]
 
         # Constants
@@ -106,6 +107,10 @@ class Swarm():
             offset = np.random.randn(*self.coords.shape)
             offset /= np.linalg.norm(offset, axis=-1, keepdims=True)
             self.coords = np.mod(self.coords + 5*offset, self.WH)
+
+
+    def measure(self, t):
+        pass
 
 
     def update(self, t, beat_progress, measure_progress, bpm):

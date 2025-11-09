@@ -35,11 +35,11 @@ class Spotlights():
         self.size = np.array([width, height])
         self.center = self.size/2
 
-        # with open('data/CLLGM CDMCM.pkl', 'rb') as f:
-        #     self.cllgm_og = pickle.load(f)
-
-        with open('data/BLOCK.pkl', 'rb') as f:
+        with open('data/CLLGM CDMCM.pkl', 'rb') as f:
             self.cllgm_og = pickle.load(f)
+
+        # with open('data/BLOCK.pkl', 'rb') as f:
+        #     self.cllgm_og = pickle.load(f)
 
         self.n_lights = 3
         self.surfaces = [pygame.Surface((width, height)) for i in range(self.n_lights)]
@@ -109,6 +109,10 @@ class Spotlights():
         self.new_lights(which=[np.random.randint(self.n_lights)])
 
 
+    def measure(self, t):
+        pass
+
+
     def update(self, t, beat_progress, measure_progress, bpm):
         self.angles_l += self.v_l
         self.pos_l = self.center + np.stack([self.radii_l * (self.w/self.h) * np.cos(self.angles_l), self.radii_l * np.sin(self.angles_l)]).T
@@ -123,7 +127,7 @@ class Spotlights():
 
 
     def draw(self, screen, brightness, t, beat_progress, measure_progress):
-        beat_spike = np.exp(-((beat_progress - np.round(beat_progress))*20)**2)
+        beat_spike = np.exp(-((beat_progress - np.round(beat_progress))*5)**2)
         beat_wave = 0.5 - 0.5*np.sin(2*np.pi * beat_progress + np.pi/4)
 
         for i in range(self.n_lights):
@@ -210,8 +214,10 @@ class Spotlights():
             surf.unlock()
 
             # Add light contribution to canvas
-            if self.intensity >= 1:
-                screen.blit(surf, (0, 30 * beat_spike - 5), special_flags=pygame.BLEND_ADD)
+            if self.intensity == 1:
+                screen.blit(surf, (0, 15 * beat_spike - 5), special_flags=pygame.BLEND_ADD)
+            elif self.intensity >= 2:
+                screen.blit(surf, (0, 40 * beat_spike - 5), special_flags=pygame.BLEND_ADD)
             else:
                 screen.blit(surf, (0, 0), special_flags=pygame.BLEND_ADD)
 

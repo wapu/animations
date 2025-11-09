@@ -3,8 +3,6 @@ with contextlib.redirect_stdout(None):
     import pygame.draw
 import numpy as np
 
-from time import time
-
 from colors import *
 
 
@@ -72,6 +70,10 @@ class Bird_1():
 
 
     def beat(self, t):
+        pass
+
+
+    def measure(self, t):
         pass
 
 
@@ -162,6 +164,10 @@ class Bird_2():
 
     def beat(self, t):
         self.stage = (self.stage + 1) % 8
+
+
+    def measure(self, t):
+        pass
 
 
     def update(self, t, beat_progress, measure_progress, bpm):
